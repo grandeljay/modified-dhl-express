@@ -56,20 +56,20 @@ class Quote
         return $surcharges;
     }
 
-    public function getQuote(): array
+    public function getQuote(): ?array
     {
         global $order, $shipping_weight;
 
         $country_code = $order->delivery['country']['iso_code_2'] ?? null;
 
         if (null === $country_code) {
-            return array();
+            return null;
         }
 
         $country_zone = Zone::fromCountry($country_code);
 
         if (null === $country_zone) {
-            return array();
+            return null;
         }
 
         $country_zone_name = 'zone_' . $country_zone->value;
