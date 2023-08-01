@@ -4,15 +4,6 @@ namespace Grandeljay\DhlExpress;
 
 class Quote
 {
-    private function getEmpty(): array
-    {
-        $emptyQuote = array(
-            'methods' => array(),
-        );
-
-        return $emptyQuote;
-    }
-
     private function getShippingCosts(string $zone_name): float
     {
         global $shipping_weight;
@@ -72,13 +63,13 @@ class Quote
         $country_code = $order->delivery['country']['iso_code_2'] ?? null;
 
         if (null === $country_code) {
-            return $this->getEmpty();
+            return array();
         }
 
         $country_zone = Zone::fromCountry($country_code);
 
         if (null === $country_zone) {
-            return $this->getEmpty();
+            return array();
         }
 
         $country_zone_name = 'zone_' . $country_zone->value;

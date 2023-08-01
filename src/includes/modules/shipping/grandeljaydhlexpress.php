@@ -59,7 +59,6 @@ class grandeljaydhlexpress extends StdModule
 
         $this->installer               = new Installer();
         $this->properties['form_edit'] = xtc_draw_form('modules', 'grandeljaydhlexpress.php');
-        $this->quotes                  = $this->quote();
     }
 
     public function install()
@@ -86,8 +85,13 @@ class grandeljaydhlexpress extends StdModule
 
     public function quote(): array
     {
-        $quote = new Quote();
+        $quote  = new Quote();
+        $quotes = $quote->getQuote();
 
-        return $quote->getQuote();
+        if (isset($quotes['methods']) && count($quotes['methods']) > 0) {
+            $this->quotes = $quotes;
+        }
+
+        return $quotes;
     }
 }
