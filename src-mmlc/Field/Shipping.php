@@ -6,7 +6,7 @@ use Grandeljay\DhlExpress\Zone;
 
 class Shipping
 {
-    public static function getInternational(array $international): string
+    public static function getInternational(): string
     {
         ob_start();
         ?>
@@ -14,11 +14,10 @@ class Shipping
             <summary>International</summary>
 
             <div>
-                <?php foreach ($international as $zone_name => $zone_data) { ?>
+                <?php foreach (Zone::cases() as $zone) { ?>
                     <?php
-                    $zone_number = substr($zone_name, 5);
-                    $zone_title  = sprintf('Zone %s', $zone_number);
-                    $zone        = Zone::fromInt($zone_number);
+                    $zone_title        = sprintf('Zone %s', $zone->value);
+                    $configuration_key = sprintf('MODULE_SHIPPING_GRANDELJAYDHLEXPRESS_SHIPPING_ZONE%s', $zone->value);
                     ?>
                     <details>
                         <summary><?= $zone_title ?></summary>
@@ -26,6 +25,9 @@ class Shipping
                         <div>
                             <p>Betrifft die Länder: <?= implode(', ', Zone::getCountries($zone)) ?>.</p>
 
+                            <textarea name="configuration[<?= $configuration_key ?>]" spellcheck="false"><?= constant($configuration_key) ?></textarea>
+
+                            <!--
                             <table>
                                 <thead>
                                     <tr>
@@ -72,6 +74,7 @@ class Shipping
                                     <?php } ?>
                                 </tbody>
                             </table>
+                            -->
                         </div>
                     </details>
                     <?php

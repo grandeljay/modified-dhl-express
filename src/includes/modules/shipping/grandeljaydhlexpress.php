@@ -11,7 +11,7 @@
  * @phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
  */
 
-use Grandeljay\DhlExpress\{Constants, Installer, Quote};
+use Grandeljay\DhlExpress\{Constants, Installer, Quote, Zone};
 use Grandeljay\DhlExpress\Field\{Shipping, Surcharges};
 use RobinTheHood\ModifiedStdModule\Classes\StdModule;
 
@@ -24,10 +24,7 @@ class grandeljaydhlexpress extends StdModule
 
     public static function shipping(string $value, string $option): string
     {
-        $decoded       = json_decode(base64_decode($value), true);
-        $international = $decoded['international'];
-
-        $html = Shipping::getInternational($international);
+        $html = Shipping::getInternational();
 
         return $html;
     }
@@ -57,8 +54,7 @@ class grandeljaydhlexpress extends StdModule
         $this->addKey('SHIPPING');
         $this->addKey('SURCHARGES');
 
-        $this->installer               = new Installer();
-        $this->properties['form_edit'] = xtc_draw_form('modules', 'grandeljaydhlexpress.php');
+        $this->installer = new Installer();
     }
 
     public function install()
@@ -66,7 +62,18 @@ class grandeljaydhlexpress extends StdModule
         parent::install();
 
         $this->addConfiguration('ALLOWED', '', 6, 1);
-        $this->addConfiguration('SHIPPING', $this->installer->getShipping(), 6, 1, \grandeljaydhlexpress::class . '::shipping(');
+        $this->addConfiguration('SHIPPING', '', 6, 1, \grandeljaydhlexpress::class . '::shipping(');
+
+        foreach (Zone::cases() as $zone) {
+            $number = $zone->value;
+
+            $configuration_key    = sprintf('SHIPPING_ZONE%s', $number);
+            $configuration_method = sprintf('getShippingZone%s', $number);
+            $configuration_value  = $this->installer->$configuration_method();
+
+            $this->addConfiguration($configuration_key, $configuration_value, 6, 1);
+        }
+
         $this->addConfiguration('SURCHARGES', $this->installer->getSurcharges(), 6, 1, \grandeljaydhlexpress::class . '::surcharges(');
 
         $this->installer->installAdminAccess();
@@ -78,6 +85,15 @@ class grandeljaydhlexpress extends StdModule
 
         $this->removeConfiguration('ALLOWED');
         $this->removeConfiguration('SHIPPING');
+
+        foreach (Zone::cases() as $zone) {
+            $number = $zone->value;
+
+            $configuration_key = sprintf('SHIPPING_ZONE%s', $number);
+
+            $this->removeConfiguration($configuration_key);
+        }
+
         $this->removeConfiguration('SURCHARGES');
 
         $this->installer->uninstallAdminAccess();

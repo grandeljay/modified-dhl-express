@@ -33,6 +33,12 @@ input {
     width: 100%;
 }
 
+.modulbox .infoBoxContent textarea {
+    height: 12em;
+
+    resize: vertical;
+}
+
 /**
  * Button
  */

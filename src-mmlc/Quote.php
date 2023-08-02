@@ -4,18 +4,13 @@ namespace Grandeljay\DhlExpress;
 
 class Quote
 {
-    private function getShippingCosts(string $zone_name): float
+    private function getShippingCosts(Zone $zone): float
     {
         global $shipping_weight;
 
-        $shipping = constant(Constants::MODULE_SHIPPING_NAME . '_SHIPPING');
-        $shipping = json_decode(base64_decode($shipping), true);
-
-        $costs_list = $shipping['international'][$zone_name] ?? null;
-
-        if (null === $costs_list) {
-            return 0;
-        }
+        $configuration_key   = sprintf(Constants::MODULE_SHIPPING_NAME . '_SHIPPING_ZONE%s', $zone->value);
+        $configuration_value = constant($configuration_key);
+        $costs_list          = json_decode($configuration_value, true);
 
         usort(
             $costs_list,
@@ -72,8 +67,6 @@ class Quote
             return null;
         }
 
-        $country_zone_name = 'zone_' . $country_zone->value;
-
         $methods = array();
 
         $method_express = array(
@@ -83,7 +76,7 @@ class Quote
                 round($shipping_weight, 2),
                 $country_zone->value
             ),
-            'cost'  => $this->getShippingCosts($country_zone_name),
+            'cost'  => $this->getShippingCosts($country_zone),
             'type'  => 'express',
         );
         if ($method_express['cost'] > 0) {
