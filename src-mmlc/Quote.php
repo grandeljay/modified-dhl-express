@@ -36,8 +36,8 @@ class Quote
     {
         $surcharges = 0;
 
-        $option  = constant(Constants::MODULE_SHIPPING_NAME . '_SURCHARGES');
-        $decoded = json_decode(base64_decode($option), true);
+        $configuration_value = constant(Constants::MODULE_SHIPPING_NAME . '_SURCHARGES');
+        $decoded             = json_decode($configuration_value, true);
 
         foreach ($decoded as $surcharge) {
             $amount = match ($surcharge['type']) {
