@@ -4096,15 +4096,13 @@ class Installer
 
     public function getSurcharges(): string
     {
-        $surcharges = base64_encode(
-            json_encode(
+        $surcharges = json_encode(
+            array(
                 array(
-                    array(
-                        'name'  => 'Treibstoff',
-                        'costs' => '30',
-                        'type'  => 'percent',
-                    ),
-                )
+                    'name'  => 'Treibstoff',
+                    'costs' => '30',
+                    'type'  => 'percent',
+                ),
             )
         );
 

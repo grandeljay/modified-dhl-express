@@ -22,7 +22,7 @@ class grandeljaydhlexpress extends StdModule
     public const VERSION     = '0.1.1';
     public array $properties = array();
 
-    public static function shipping(string $value, string $option): string
+    public static function shipping(): string
     {
         $html = Shipping::getInternational();
 
@@ -31,10 +31,7 @@ class grandeljaydhlexpress extends StdModule
 
     public static function surcharges(string $value, string $option): string
     {
-        $decoded    = json_decode(base64_decode($value), true);
-        $surcharges = $decoded;
-
-        $html = Surcharges::getSurcharges($surcharges);
+        $html = Surcharges::getSurcharges($option);
 
         return $html;
     }
