@@ -9,7 +9,6 @@
 
 function DOMContentLoaded() {
     addEventListenerButtonRemove();
-    addEventListenerButtonAdd();
 }
 
 document.addEventListener('DOMContentLoaded', DOMContentLoaded);
