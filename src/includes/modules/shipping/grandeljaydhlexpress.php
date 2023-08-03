@@ -69,18 +69,7 @@ class grandeljaydhlexpress extends StdModule
         $this->addConfiguration('ALLOWED', '', 6, 1);
 
         $this->addConfigurationWeight();
-
-        $this->addConfiguration('SHIPPING', '', 6, 1, \grandeljaydhlexpress::class . '::shipping(');
-
-        foreach (Zone::cases() as $zone) {
-            $number = $zone->value;
-
-            $configuration_key    = sprintf('SHIPPING_ZONE%s', $number);
-            $configuration_method = sprintf('getShippingZone%s', $number);
-            $configuration_value  = $this->installer->$configuration_method();
-
-            $this->addConfiguration($configuration_key, $configuration_value, 6, 1);
-        }
+        $this->addConfigurationShipping();
 
         $this->addConfiguration('SURCHARGES', $this->installer->getSurcharges(), 6, 1, \grandeljaydhlexpress::class . '::surcharges(');
 
@@ -94,6 +83,21 @@ class grandeljaydhlexpress extends StdModule
         $this->addConfiguration('WEIGHT_MAXIMUM', SHIPPING_MAX_WEIGHT, 6, 1);
     }
 
+    private function addConfigurationShipping(): void
+    {
+        $this->addConfiguration('SHIPPING', '', 6, 1, \grandeljaydhlexpress::class . '::shipping(');
+
+        foreach (Zone::cases() as $zone) {
+            $number = $zone->value;
+
+            $configuration_key    = sprintf('SHIPPING_ZONE%s', $number);
+            $configuration_method = sprintf('getShippingZone%s', $number);
+            $configuration_value  = $this->installer->$configuration_method();
+
+            $this->addConfiguration($configuration_key, $configuration_value, 6, 1);
+        }
+    }
+
     public function remove()
     {
         parent::remove();
@@ -101,16 +105,7 @@ class grandeljaydhlexpress extends StdModule
         $this->removeConfiguration('ALLOWED');
 
         $this->removeConfigurationWeight();
-
-        $this->removeConfiguration('SHIPPING');
-
-        foreach (Zone::cases() as $zone) {
-            $number = $zone->value;
-
-            $configuration_key = sprintf('SHIPPING_ZONE%s', $number);
-
-            $this->removeConfiguration($configuration_key);
-        }
+        $this->removeConfigurationShipping();
 
         $this->removeConfiguration('SURCHARGES');
 
@@ -122,6 +117,19 @@ class grandeljaydhlexpress extends StdModule
         $this->removeConfiguration('WEIGHT');
         $this->removeConfiguration('WEIGHT_IDEAL');
         $this->removeConfiguration('WEIGHT_MAXIMUM');
+    }
+
+    private function removeConfigurationShipping(): void
+    {
+        $this->removeConfiguration('SHIPPING');
+
+        foreach (Zone::cases() as $zone) {
+            $number = $zone->value;
+
+            $configuration_key = sprintf('SHIPPING_ZONE%s', $number);
+
+            $this->removeConfiguration($configuration_key);
+        }
     }
 
     /**
