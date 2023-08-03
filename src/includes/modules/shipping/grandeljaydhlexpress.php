@@ -12,7 +12,7 @@
  */
 
 use Grandeljay\DhlExpress\{Constants, Installer, Quote, Zone};
-use Grandeljay\DhlExpress\Field\{Shipping, Surcharges};
+use Grandeljay\DhlExpress\Field\{Shipping, Surcharges, Weight};
 use RobinTheHood\ModifiedStdModule\Classes\StdModule;
 
 class grandeljaydhlexpress extends StdModule
@@ -21,6 +21,13 @@ class grandeljaydhlexpress extends StdModule
 
     public const VERSION     = '0.1.3';
     public array $properties = array();
+
+    public static function weight(): string
+    {
+        $html = Weight::getWeight();
+
+        return $html;
+    }
 
     public static function shipping(): string
     {
@@ -48,6 +55,7 @@ class grandeljaydhlexpress extends StdModule
     {
         parent::__construct(Constants::MODULE_SHIPPING_NAME);
 
+        $this->addKey('WEIGHT');
         $this->addKey('SHIPPING');
         $this->addKey('SURCHARGES');
 
@@ -59,6 +67,9 @@ class grandeljaydhlexpress extends StdModule
         parent::install();
 
         $this->addConfiguration('ALLOWED', '', 6, 1);
+
+        $this->addConfigurationWeight();
+
         $this->addConfiguration('SHIPPING', '', 6, 1, \grandeljaydhlexpress::class . '::shipping(');
 
         foreach (Zone::cases() as $zone) {
@@ -76,11 +87,21 @@ class grandeljaydhlexpress extends StdModule
         $this->installer->installAdminAccess();
     }
 
+    private function addConfigurationWeight(): void
+    {
+        $this->addConfiguration('WEIGHT', '', 6, 1, \grandeljaydhlexpress::class . '::weight(');
+        $this->addConfiguration('WEIGHT_IDEAL', round(SHIPPING_MAX_WEIGHT * 0.75), 6, 1);
+        $this->addConfiguration('WEIGHT_MAXIMUM', SHIPPING_MAX_WEIGHT, 6, 1);
+    }
+
     public function remove()
     {
         parent::remove();
 
         $this->removeConfiguration('ALLOWED');
+
+        $this->removeConfigurationWeight();
+
         $this->removeConfiguration('SHIPPING');
 
         foreach (Zone::cases() as $zone) {
@@ -94,6 +115,13 @@ class grandeljaydhlexpress extends StdModule
         $this->removeConfiguration('SURCHARGES');
 
         $this->installer->uninstallAdminAccess();
+    }
+
+    private function removeConfigurationWeight(): void
+    {
+        $this->removeConfiguration('WEIGHT');
+        $this->removeConfiguration('WEIGHT_IDEAL');
+        $this->removeConfiguration('WEIGHT_MAXIMUM');
     }
 
     /**

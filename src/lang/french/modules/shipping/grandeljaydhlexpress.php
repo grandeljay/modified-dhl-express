@@ -23,6 +23,8 @@ $translations = array(
     'ALLOWED_TITLE'     => '',
     'ALLOWED_DESC'      => '',
 
+    'WEIGHT_TITLE'      => 'Poids',
+    'WEIGHT_DESC'       => 'Déterminer le poids idéal et le poids maximal.',
     'SHIPPING_TITLE'    => 'Expédition',
     'SHIPPING_DESC'     => 'Poids, prix et paramètres des différents modes d\'expédition de DHL Express.',
     'SURCHARGES_TITLE'  => 'Suppléments',
