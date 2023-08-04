@@ -164,3 +164,11 @@ details > summary > h6 {
 details > div {
     padding: 10px;
 }
+
+details > div > :first-child {
+    margin-top: 0;
+}
+
+details > div > :last-child {
+    margin-bottom: 0;
+}
