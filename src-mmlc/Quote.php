@@ -40,6 +40,17 @@ class Quote
         $decoded             = json_decode($configuration_value, true);
 
         foreach ($decoded as $surcharge) {
+            if (isset($surcharge['date-from'], $surcharge['date-to'])) {
+                $date_now  = time();
+                $date_from = strtotime($surcharge['date-from']);
+                $date_to   = strtotime($surcharge['date-to']);
+
+                /** Skip iteration if date critera doesn't match */
+                if ($date_now < $date_from || $date_now > $date_to) {
+                    continue;
+                }
+            }
+
             $amount = match ($surcharge['type']) {
                 'fixed'   => $surcharge['costs'],
                 'percent' => $method_costs * ($surcharge['costs'] / 100),
@@ -99,5 +110,25 @@ class Quote
         );
 
         return $quote;
+    }
+
+    public function exceedsMaximumWeight(): bool
+    {
+        global $order;
+
+        if (null === $order) {
+            return false;
+        }
+
+        $configuration_key_weight_max   = Constants::MODULE_SHIPPING_NAME . '_WEIGHT_MAXIMUM';
+        $configuration_value_weight_max = constant($configuration_key_weight_max);
+
+        foreach ($order->products as $product) {
+            if ($product['weight'] >= $configuration_value_weight_max) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

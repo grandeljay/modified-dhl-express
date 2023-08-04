@@ -4103,7 +4103,22 @@ class Installer
                     'costs' => '30',
                     'type'  => 'percent',
                 ),
-            )
+                array(
+                    'name'      => 'Peak',
+                    'costs'     => '4.9',
+                    'type'      => 'fixed',
+                    'date-from' => date('Y-m-d', strtotime('31st October this year')),
+                    'date-to'   => date('Y-m-d', strtotime('01st January next year')),
+                ),
+                array(
+                    'name'      => 'Peak (großes Paket)',
+                    'costs'     => '43',
+                    'type'      => 'fixed',
+                    'date-from' => date('Y-m-d', strtotime('31st October this year')),
+                    'date-to'   => date('Y-m-d', strtotime('01st January next year')),
+                ),
+            ),
+            JSON_UNESCAPED_UNICODE
         );
 
         return $surcharges;

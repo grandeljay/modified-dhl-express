@@ -143,7 +143,7 @@ class grandeljaydhlexpress extends StdModule
         $quote  = new Quote();
         $quotes = $quote->getQuote();
 
-        if (is_array($quotes)) {
+        if (is_array($quotes) && !$quote->exceedsMaximumWeight()) {
             $this->quotes = $quotes;
         }
 
