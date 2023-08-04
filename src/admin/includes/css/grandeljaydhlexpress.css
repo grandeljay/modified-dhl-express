@@ -38,6 +38,13 @@ input {
 
     resize: vertical;
 }
+.modulbox .infoBoxContent textarea[readonly] {
+    user-select: none;
+    cursor: wait;
+
+    color: #929292;
+    background-color: #f0f0f0;
+}
 
 /**
  * Button
