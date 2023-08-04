@@ -72,8 +72,6 @@ function documentChange(event) {
 
         let apiElement = this.closest('details').querySelector('[data-url]');
 
-        console.log(apiElement);
-
         tableRows.forEach(tableRow => {
             let inputWeightMax   = tableRow.querySelector('[data-name="weight-max"]');
             let inputWeightCosts = tableRow.querySelector('[data-name="weight-costs"]');
