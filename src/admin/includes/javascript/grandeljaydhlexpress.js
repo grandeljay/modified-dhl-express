@@ -9,36 +9,56 @@
 "use strict";
 
 function DOMContentLoaded() {
+    const observerOptions  = {
+        'root'      : null,
+        'threshold' : 0
+    };
+    const observerCallback = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const textarea = entry.target;
+
+                textarea.setAttribute('readonly', 'readonly');
+
+                const url     = textarea.getAttribute('data-url');
+                const options = {
+                    'method'  : 'POST',
+                    'headers' : {
+                        'Content-Type' : 'application/json',
+                        'Accept'       : 'text/html',
+                    },
+                    'body'    : JSON.stringify({
+                        'json' : textarea.value
+                    })
+                };
+
+                fetch(url, options)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Network response was not ok: ${response.status}`);
+                        }
+
+                        return response.text();
+                    })
+                    .then(html => {
+                        textarea.style.display = 'none';
+                        textarea.insertAdjacentHTML('afterend', html);
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                    })
+                    .finally(() => {
+                        textarea.removeAttribute('readonly');
+                    });
+            }
+        });
+    };
+    const observer         = new IntersectionObserver(observerCallback, observerOptions);
+
     let apiElements = document.querySelectorAll('[data-url]');
 
     apiElements.forEach(apiElement => {
-        let url     = apiElement.getAttribute('data-url');
-        let options = {
-            'method'  : 'POST',
-            'headers' : {
-                'Content-Type' : 'application/json',
-                'Accept'       : 'text/html',
-            },
-            'body'    : JSON.stringify({
-                'json' : apiElement.value
-            })
-        };
-
-        fetch(url, options)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Network response was not ok: ${response.status}`);
-                }
-
-                return response.text();
-            })
-            .then(html => {
-                apiElement.style.display = 'none';
-                apiElement.insertAdjacentHTML('afterend', html);
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-            });
+        observer.observe(apiElement);
     });
 }
 
