@@ -2,6 +2,8 @@
 
 namespace Grandeljay\DhlExpress\Field;
 
+use Grandeljay\DhlExpress\Constants;
+
 class Surcharges
 {
     public static function getSurcharges(string $option): string
@@ -10,12 +12,13 @@ class Surcharges
         ?>
         <details>
             <summary>Aufschläge</summary>
+
             <div>
                 <?php
                 $configuration_key   = $option;
                 $configuration_value = constant($configuration_key);
                 ?>
-                <textarea name="configuration[<?= $configuration_key ?>]" spellcheck="false"><?= $configuration_value ?></textarea>
+                <textarea name="configuration[<?= $configuration_key ?>]" spellcheck="false" data-url="<?= Constants::API_ENDPOINT_SURCHARGES_GET ?>"><?= $configuration_value ?></textarea>
             </div>
         </details>
         <?php

@@ -26,7 +26,7 @@ class Shipping
                         <div>
                             <p>Betrifft die Länder: <?= implode(', ', Zone::getCountries($zone)) ?>.</p>
 
-                            <textarea name="configuration[<?= $configuration_key ?>]" spellcheck="false" data-url="<?= Constants::API_ENDPOINT ?>"><?= $configuration_value ?></textarea>
+                            <textarea name="configuration[<?= $configuration_key ?>]" spellcheck="false" data-url="<?= Constants::API_ENDPOINT_WEIGHT_GET ?>"><?= $configuration_value ?></textarea>
                         </div>
                     </details>
                     <?php

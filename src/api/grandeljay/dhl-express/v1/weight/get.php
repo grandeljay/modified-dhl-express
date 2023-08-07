@@ -8,6 +8,18 @@
  * @package GrandeljayDhlExpress
  */
 
+namespace Grandeljay\DhlExpress;
+
+chdir('../../../../..');
+
+require 'includes/application_top.php';
+
+if (rth_is_module_disabled(Constants::MODULE_SHIPPING_NAME)) {
+    http_response_code(403);
+
+    return;
+}
+
 $jsonEncoded = file_get_contents('php://input');
 
 if (false === $jsonEncoded) {
@@ -19,7 +31,7 @@ $entries     = json_decode($jsonDecoded['json'], true, 512, JSON_THROW_ON_ERROR)
 
 ob_start();
 ?>
-<table>
+<table data-function="inputWeightChange">
     <thead>
         <tr>
             <th>Gewicht</th>
@@ -39,6 +51,12 @@ ob_start();
             </tr>
         <?php } ?>
     </tbody>
+
+    <tfoot>
+        <tr>
+        <td><input type="button" class="button" value="Hinzufügen" data-url="<?= Constants::API_ENDPOINT_WEIGHT_ADD ?>"></td>
+        </tr>
+    </tfoot>
 </table>
 <?php
 $response = ob_get_clean();
