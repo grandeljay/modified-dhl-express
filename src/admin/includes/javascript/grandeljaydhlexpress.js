@@ -94,6 +94,10 @@ function inputWeightChange() {
         let inputWeightMax   = tableRow.querySelector('[data-name="weight-max"]');
         let inputWeightCosts = tableRow.querySelector('[data-name="weight-costs"]');
 
+        if (tableRow.classList.contains('remove')) {
+            return;
+        }
+
         tableData.push({
             'weight-max'   : inputWeightMax.value,
             'weight-costs' : inputWeightCosts.value
@@ -117,6 +121,10 @@ function inputSurchargeChange() {
         let inputDateFrom = tableRow.querySelector('[data-name="date-from"]');
         let inputDateTo   = tableRow.querySelector('[data-name="date-to"]');
 
+        if (tableRow.classList.contains('remove')) {
+            return;
+        }
+
         tableData.push({
             'name'      : inputName.value,
             'costs'     : inputCosts.value,
@@ -136,6 +144,13 @@ function inputSurchargeChange() {
 function documentClick(event) {
     if (event.target.matches('tfoot input[type="button"][data-url]')) {
         inputAddClick.call(event.target);
+    }
+
+    if (
+        event.target.matches('td button[value="remove"]') ||
+        event.target.matches('td button[value="remove"] > img')
+    ) {
+        inputRemoveClick.call(event.target);
     }
 }
 
@@ -171,4 +186,16 @@ function inputAddClick() {
         .finally(() => {
 
         });
+}
+
+function inputRemoveClick() {
+    const tr          = this.closest('tr');
+    const input       = tr.querySelector('[data-name]');
+    const eventChange = new Event('change', {
+        'bubbles' : true
+    });
+
+    tr.classList.add('remove');
+    input.dispatchEvent(eventChange);
+    tr.style.display = 'none';
 }

@@ -25,6 +25,11 @@ ob_start();
 <tr>
     <td><input type="number" step="any" data-name="weight-max"></td>
     <td><input type="number" step="any" data-name="weight-costs"></td>
+    <td>
+        <button type="button" value="remove">
+            <img src="images/icons/cross.gif">
+        </button>
+    </td>
 </tr>
 <?php
 

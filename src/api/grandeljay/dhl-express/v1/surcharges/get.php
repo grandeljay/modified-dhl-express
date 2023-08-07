@@ -29,6 +29,13 @@ if (false === $jsonEncoded) {
 $jsonDecoded = json_decode($jsonEncoded, true, 512, JSON_THROW_ON_ERROR);
 $entries     = json_decode($jsonDecoded['json'], true, 512, JSON_THROW_ON_ERROR);
 
+usort(
+    $entries,
+    function ($entry_a, $entry_b) {
+        return $entry_a['name'] <=> $entry_b['name'];
+    }
+);
+
 ob_start();
 ?>
 <table data-function="inputSurchargeChange">
@@ -66,6 +73,11 @@ ob_start();
                 </td>
                 <td><input data-name="date-from" type="date" value="<?= $data['date-from'] ?? '' ?>"></td>
                 <td><input data-name="date-to" type="date" value="<?= $data['date-to'] ?? '' ?>"></td>
+                <td>
+                    <button type="button" value="remove">
+                        <img src="images/icons/cross.gif">
+                    </button>
+                </td>
             </tr>
         <?php } ?>
     </tbody>

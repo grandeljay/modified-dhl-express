@@ -33,6 +33,11 @@ ob_start();
     </td>
     <td><input data-name="date-from" type="date"></td>
     <td><input data-name="date-to" type="date"></td>
+    <td>
+        <button type="button" value="remove">
+            <img src="images/icons/cross.gif">
+        </button>
+    </td>
 </tr>
 <?php
 

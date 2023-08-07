@@ -29,6 +29,13 @@ if (false === $jsonEncoded) {
 $jsonDecoded = json_decode($jsonEncoded, true, 512, JSON_THROW_ON_ERROR);
 $entries     = json_decode($jsonDecoded['json'], true, 512, JSON_THROW_ON_ERROR);
 
+usort(
+    $entries,
+    function ($entry_a, $entry_b) {
+        return $entry_a['weight-max'] <=> $entry_b['weight-max'];
+    }
+);
+
 ob_start();
 ?>
 <table data-function="inputWeightChange">
@@ -48,6 +55,11 @@ ob_start();
             <tr>
                 <td><input type="number" step="any" value="<?= $data['weight-max'] ?>" data-name="weight-max"></td>
                 <td><input type="number" step="any" value="<?= $data['weight-costs'] ?>" data-name="weight-costs"></td>
+                <td>
+                    <button type="button" value="remove">
+                        <img src="images/icons/cross.gif">
+                    </button>
+                </td>
             </tr>
         <?php } ?>
     </tbody>
