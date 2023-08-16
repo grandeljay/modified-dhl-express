@@ -4,6 +4,8 @@ namespace Grandeljay\DhlExpress;
 
 class Quote
 {
+    private array $calculations = array();
+
     private function getShippingCosts(Zone $zone): float
     {
         global $shipping_weight;
@@ -24,6 +26,12 @@ class Quote
         foreach ($costs_list as $cost) {
             if ($shipping_weight <= $cost['weight-max']) {
                 $costs = $cost['weight-costs'];
+
+                $this->calculations[] = sprintf(
+                    'Shipping weight of %s kg costs %s €.',
+                    $shipping_weight,
+                    $costs
+                );
 
                 break;
             }
@@ -47,7 +55,21 @@ class Quote
 
                 /** Skip iteration if date critera doesn't match */
                 if ($date_now < $date_from || $date_now > $date_to) {
+                    $this->calculations[] = sprintf(
+                        'Surcharge %s has date set: %s - %s. Skipping surcharge...',
+                        $surcharge['name'],
+                        $surcharge['date-from'],
+                        $surcharge['date-to']
+                    );
+
                     continue;
+                } else {
+                    $this->calculations[] = sprintf(
+                        'Surcharge %s has date set: %s - %s. Applying surcharge:',
+                        $surcharge['name'],
+                        $surcharge['date-from'],
+                        $surcharge['date-to']
+                    );
                 }
             }
 
@@ -55,6 +77,14 @@ class Quote
                 'fixed'   => $surcharge['costs'],
                 'percent' => $method_costs * ($surcharge['costs'] / 100),
             };
+
+            $this->calculations[] = sprintf(
+                'Surcharge %s is %s: %s (%s)',
+                $surcharge['name'],
+                $surcharge['type'],
+                $surcharge['costs'],
+                $amount
+            );
 
             $surcharges += $amount;
         }
@@ -97,6 +127,24 @@ class Quote
         /** Surcharges */
         foreach ($methods as &$method) {
             $method['cost'] += $this->getSurcharges($method['cost']);
+        }
+
+        /** Debug information */
+        $user_is_admin = isset($_SESSION['customers_status']['customers_status_id']) && 0 === (int) $_SESSION['customers_status']['customers_status_id'];
+
+        if ($user_is_admin) {
+            foreach ($methods as &$method) {
+                ob_start();
+                ?>
+                <br><br>
+
+                <h3>Debug mode</h3>
+                <?php foreach ($this->calculations as $calculation) { ?>
+                    <p><?= $calculation ?></p>
+                <?php } ?>
+                <?php
+                $method['title'] .= ob_get_clean();
+            }
         }
 
         /** Quote */
