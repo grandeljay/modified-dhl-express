@@ -55,6 +55,8 @@ class grandeljaydhlexpress extends StdModule
     {
         parent::__construct(Constants::MODULE_SHIPPING_NAME);
 
+        $this->addKey('SORT_ORDER');
+
         $this->addKey('WEIGHT');
         $this->addKey('SHIPPING');
         $this->addKey('SURCHARGES');
@@ -67,6 +69,7 @@ class grandeljaydhlexpress extends StdModule
         parent::install();
 
         $this->addConfiguration('ALLOWED', '', 6, 1);
+        $this->addConfiguration('SORT_ORDER', 2, 6, 1);
 
         $this->addConfigurationWeight();
         $this->addConfigurationShipping();
@@ -103,6 +106,7 @@ class grandeljaydhlexpress extends StdModule
         parent::remove();
 
         $this->removeConfiguration('ALLOWED');
+        $this->removeConfiguration('SORT_ORDER');
 
         $this->removeConfigurationWeight();
         $this->removeConfigurationShipping();
