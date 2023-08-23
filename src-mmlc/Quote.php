@@ -139,6 +139,25 @@ class Quote
             $method['cost'] += $this->getSurcharges($method['cost']);
         }
 
+        /** Round up */
+        foreach ($methods as &$method) {
+            $costs_without_decimals = floor($method['cost']);
+            $costs_decimals         = $method['cost'] - $costs_without_decimals;
+
+            if (0.9 !== $costs_decimals) {
+                $costs_rounded_up = ceil($method['cost']) + 0.9;
+
+                $this->calculations[] = array(
+                    'item'  => sprintf(
+                        'Rounding up',
+                    ),
+                    'costs' => $costs_rounded_up - $method['cost'],
+                );
+
+                $method['cost'] = $costs_rounded_up;
+            }
+        }
+
         /** Debug information */
         $user_is_admin = isset($_SESSION['customers_status']['customers_status_id']) && 0 === (int) $_SESSION['customers_status']['customers_status_id'];
 
