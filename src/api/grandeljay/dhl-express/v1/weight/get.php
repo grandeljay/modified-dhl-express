@@ -8,14 +8,19 @@
  * @package GrandeljayDhlExpress
  */
 
-namespace Grandeljay\DhlExpress;
+ namespace Grandeljay\DhlExpress;
 
-chdir('../../../../..');
+ use grandeljaydhlexpress;
 
-require 'includes/application_top.php';
+ chdir('../../../../..');
 
-if (rth_is_module_disabled(Constants::MODULE_SHIPPING_NAME)) {
+ require 'includes/application_top.php';
+ require DIR_WS_MODULES . '/shipping/grandeljaydhlexpress.php';
+
+if (!grandeljaydhlexpress::userMayAccessAPI()) {
     http_response_code(403);
+
+    echo 'Access denied.';
 
     return;
 }
