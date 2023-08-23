@@ -27,10 +27,12 @@ class Quote
             if ($shipping_weight <= $cost['weight-max']) {
                 $costs = $cost['weight-costs'];
 
-                $this->calculations[] = sprintf(
-                    'Shipping weight of %s kg costs %s €.',
-                    $shipping_weight,
-                    $costs
+                $this->calculations[] = array(
+                    'item'  => sprintf(
+                        'Shipping weight of %s kg',
+                        $shipping_weight
+                    ),
+                    'costs' => $costs,
                 );
 
                 break;
@@ -55,20 +57,26 @@ class Quote
 
                 /** Skip iteration if date critera doesn't match */
                 if ($date_now < $date_from || $date_now > $date_to) {
-                    $this->calculations[] = sprintf(
-                        'Surcharge %s has date set: %s - %s. Skipping surcharge...',
-                        $surcharge['name'],
-                        $surcharge['date-from'],
-                        $surcharge['date-to']
+                    $this->calculations[] = array(
+                        'item'  => sprintf(
+                            'Surcharge %s has date set: %s - %s. Skipping surcharge...',
+                            $surcharge['name'],
+                            $surcharge['date-from'],
+                            $surcharge['date-to']
+                        ),
+                        'costs' => 0,
                     );
 
                     continue;
                 } else {
-                    $this->calculations[] = sprintf(
-                        'Surcharge %s has date set: %s - %s. Applying surcharge:',
-                        $surcharge['name'],
-                        $surcharge['date-from'],
-                        $surcharge['date-to']
+                    $this->calculations[] = array(
+                        'item'  => sprintf(
+                            'Surcharge %s has date set: %s - %s. Applying surcharge:',
+                            $surcharge['name'],
+                            $surcharge['date-from'],
+                            $surcharge['date-to']
+                        ),
+                        'costs' => 0,
                     );
                 }
             }
@@ -78,12 +86,14 @@ class Quote
                 'percent' => $method_costs * ($surcharge['costs'] / 100),
             };
 
-            $this->calculations[] = sprintf(
-                'Surcharge %s is %s: %s (%s)',
-                $surcharge['name'],
-                $surcharge['type'],
-                $surcharge['costs'],
-                $amount
+            $this->calculations[] = array(
+                'item'  => sprintf(
+                    'Surcharge %s is %s: %s.',
+                    $surcharge['name'],
+                    $surcharge['type'],
+                    $surcharge['costs']
+                ),
+                'costs' => $amount,
             );
 
             $surcharges += $amount;
@@ -134,14 +144,34 @@ class Quote
 
         if ($user_is_admin) {
             foreach ($methods as &$method) {
+                $total = 0;
+
                 ob_start();
                 ?>
                 <br><br>
 
                 <h3>Debug mode</h3>
-                <?php foreach ($this->calculations as $calculation) { ?>
-                    <p><?= $calculation ?></p>
-                <?php } ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Costs</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <?php foreach ($this->calculations[$method['id']] as $calculation) { ?>
+                            <?php $total += $calculation['costs']; ?>
+
+                            <tr>
+                                <td><?= $calculation['item'] ?></td>
+                                <td><?= $calculation['costs'] ?></td>
+                                <td><?= $total ?></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
                 <?php
                 $method['title'] .= ob_get_clean();
             }

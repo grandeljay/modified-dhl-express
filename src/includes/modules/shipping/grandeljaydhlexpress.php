@@ -38,7 +38,7 @@ class grandeljaydhlexpress extends StdModule
 
     public static function surcharges(string $value, string $option): string
     {
-        $html = Surcharges::getSurcharges($option);
+        $html = Surcharges::getSurchargesGroup($value, $option);
 
         return $html;
     }
@@ -97,8 +97,7 @@ class grandeljaydhlexpress extends StdModule
 
         $this->addConfigurationWeight();
         $this->addConfigurationShipping();
-
-        $this->addConfiguration('SURCHARGES', $this->installer->getSurcharges(), 6, 1, \grandeljaydhlexpress::class . '::surcharges(');
+        $this->addConfigurationSurcharges();
 
         $this->installer->installAdminAccess();
     }
@@ -125,6 +124,12 @@ class grandeljaydhlexpress extends StdModule
         }
     }
 
+    private function addConfigurationSurcharges(): void
+    {
+        $this->addConfiguration('SURCHARGES', $this->installer->getSurcharges(), 6, 1, self::class . '::surcharges(');
+        $this->addConfiguration('PICK_PACK', $this->installer->getPickPack(), 6, 1);
+    }
+
     public function remove()
     {
         parent::remove();
@@ -134,8 +139,7 @@ class grandeljaydhlexpress extends StdModule
 
         $this->removeConfigurationWeight();
         $this->removeConfigurationShipping();
-
-        $this->removeConfiguration('SURCHARGES');
+        $this->removeConfigurationSurcharges();
 
         $this->installer->uninstallAdminAccess();
     }
@@ -158,6 +162,12 @@ class grandeljaydhlexpress extends StdModule
 
             $this->removeConfiguration($configuration_key);
         }
+    }
+
+    private function removeConfigurationSurcharges(): void
+    {
+        $this->removeConfiguration('SURCHARGES');
+        $this->removeConfiguration('PICK_PACK');
     }
 
     /**
