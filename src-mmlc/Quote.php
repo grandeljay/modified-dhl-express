@@ -99,6 +99,43 @@ class Quote
             $surcharges += $amount;
         }
 
+        /**
+         * Pick & Pack
+         */
+        global $shipping_weight;
+
+        $pick_pack_key   = Constants::MODULE_SHIPPING_NAME . '_PICK_PACK';
+        $pick_pack_value = constant($pick_pack_key);
+        $pick_pack       = json_decode($pick_pack_value, true);
+
+        usort(
+            $pick_pack,
+            function ($costs_a, $costs_b) {
+                return $costs_a['weight-costs'] <=> $costs_b['weight-costs'];
+            }
+        );
+
+        $pick_pack_costs = 0;
+
+        foreach ($pick_pack as $cost) {
+            if ($shipping_weight <= $cost['weight-max']) {
+                $pick_pack_costs = $cost['weight-costs'];
+
+                $this->calculations[] = array(
+                    'item'  => sprintf(
+                        'Pick & Pack for %s kg.',
+                        $shipping_weight
+                    ),
+                    'costs' => $pick_pack_costs,
+                );
+
+                break;
+            }
+        }
+
+        $surcharges += $pick_pack_costs;
+
+
         return $surcharges;
     }
 
