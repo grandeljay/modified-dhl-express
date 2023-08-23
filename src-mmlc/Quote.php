@@ -180,7 +180,7 @@ class Quote
                     </thead>
 
                     <tbody>
-                        <?php foreach ($this->calculations[$method['id']] as $calculation) { ?>
+                        <?php foreach ($this->calculations as $calculation) { ?>
                             <?php $total += $calculation['costs']; ?>
 
                             <tr>
