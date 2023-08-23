@@ -19,7 +19,7 @@ class grandeljaydhlexpress extends StdModule
 {
     private Installer $installer;
 
-    public const VERSION     = '0.4.5';
+    public const VERSION     = '0.4.6';
     public array $properties = array();
 
     public static function weight(): string
