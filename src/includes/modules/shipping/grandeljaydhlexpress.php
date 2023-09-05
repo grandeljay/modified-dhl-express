@@ -122,6 +122,8 @@ class grandeljaydhlexpress extends StdModule
 
             $this->addConfiguration($configuration_key, $configuration_value, 6, 1);
         }
+
+        $this->addConfiguration('SHIPPING_ZONE_PER_KG', $this->installer->getShippingZonePerKg(), 6, 1);
     }
 
     private function addConfigurationSurcharges(): void

@@ -40,18 +40,58 @@ class Quote
             }
         }
 
-        if (0 === $costs && count($costs_list) >= 1) {
+        /**
+         * Total weight exceeds highest defined tarif
+         */
+        if (count($costs_list) >= 1) {
             $cots_list_last = end($costs_list);
-            $costs          = $cots_list_last['weight-costs'];
 
-            $this->calculations[] = array(
-                'item'  => sprintf(
-                    'No tarif defined for %s kg. Falling back to highest defined tarif (%s kg) for this zone.',
-                    $total_weight,
-                    $cots_list_last['weight-max']
-                ),
-                'costs' => $costs,
-            );
+            /**
+             * Total weight exceeds highest defined tarif
+             */
+            if (0 === $costs) {
+                $costs = $cots_list_last['weight-costs'];
+
+                $this->calculations[] = array(
+                    'item'  => sprintf(
+                        'No tarif defined for %s kg. Falling back to highest defined tarif (%s kg) for this zone.',
+                        $total_weight,
+                        $cots_list_last['weight-max']
+                    ),
+                    'costs' => $costs,
+                );
+            }
+
+            /**
+             * Total weight exceeds highest defined tarif
+             */
+            if ($total_weight > $cots_list_last['weight-max']) {
+                $shippingZonePerKg        = \constant(Constants::MODULE_SHIPPING_NAME . '_SHIPPING_ZONE_PER_KG');
+                $shippingZonePerKgEntries = \json_decode($shippingZonePerKg, true);
+
+                foreach ($shippingZonePerKgEntries as $zoneSet) {
+                    if ($total_weight >= $zoneSet['from'] && $total_weight <= $zoneSet['to']) {
+                        $costs_per_kg        = $zoneSet['zones'][$zone->value];
+                        $costs_tarif         = end($costs_list);
+                        $costs_per_kg_weight = $total_weight - $costs_tarif['weight-max'];
+                        $costs_to_add        = ceil($costs_per_kg_weight) * $costs_per_kg;
+                        $costs              += $costs_to_add;
+
+                        $this->calculations[] = array(
+                            'item'  => sprintf(
+                                'Total weight of %s exceeds highest tarif (%s Kg). Applying costs (%s €) per kg (%s kg).',
+                                $total_weight,
+                                $costs_tarif['weight-max'] ?? 0,
+                                $costs_per_kg,
+                                $costs_per_kg_weight
+                            ),
+                            'costs' => $costs_to_add,
+                        );
+
+                        break;
+                    }
+                }
+            }
         }
 
         return $costs;

@@ -8,14 +8,15 @@
  * @package GrandeljayDhlExpress
  */
 
- namespace Grandeljay\DhlExpress;
+namespace Grandeljay\DhlExpress;
 
- use grandeljaydhlexpress;
+use grandeljaydhlexpress;
 
- chdir('../../../../..');
+chdir('../../../../..');
 
- require 'includes/application_top.php';
- require DIR_WS_MODULES . '/shipping/grandeljaydhlexpress.php';
+require 'includes/application_top.php';
+require DIR_WS_MODULES . 'shipping/grandeljaydhlexpress.php';
+require \DIR_WS_LANGUAGES .  $_SESSION['language'] . '/modules/shipping/' . grandeljaydhlexpress::class . '.php';
 
 if (!grandeljaydhlexpress::userMayAccessAPI()) {
     http_response_code(403);
@@ -70,8 +71,31 @@ ob_start();
     </tbody>
 
     <tfoot>
+        <?php
+        $textWeightPerKg          = \constant(Constants::MODULE_SHIPPING_NAME . '_WEIGHT_PER_KG');
+        $shippingZone             = $jsonDecoded['zone'];
+        $shippingZonePerKg        = \constant(Constants::MODULE_SHIPPING_NAME . '_SHIPPING_ZONE_PER_KG');
+        $shippingZonePerKgEntries = \json_decode($shippingZonePerKg, true);
+
+        $maxDefinedWeight = end($entries)['weight-max'] ?? 0;
+
+        foreach ($shippingZonePerKgEntries as $zoneSet) {
+            if ($maxDefinedWeight > $zoneSet['from']) {
+                continue;
+            }
+
+            $costsPerKg = $zoneSet['zones'][$shippingZone];
+            ?>
+            <tr>
+                <td><?= \sprintf($textWeightPerKg, $zoneSet['from'], $zoneSet['to']) ?></td>
+                <td><input type="number" step="any" data-name="weight-per-kg" value="<?= $costsPerKg ?>" readonly="readonly" style="color: grey; cursor: no-drop;"></td>
+                <td></td>
+            </tr>
+            <?php
+        }
+        ?>
         <tr>
-        <td><input type="button" class="button" value="Hinzufügen" data-url="<?= Constants::API_ENDPOINT_WEIGHT_ADD ?>"></td>
+            <td><input type="button" class="button" value="Hinzufügen" data-url="<?= Constants::API_ENDPOINT_WEIGHT_ADD ?>"></td>
         </tr>
     </tfoot>
 </table>

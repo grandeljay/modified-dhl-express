@@ -21,6 +21,7 @@ function DOMContentLoaded() {
                 textarea.setAttribute('readonly', 'readonly');
 
                 const url     = textarea.getAttribute('data-url');
+                const zone    = textarea.getAttribute('data-zone');
                 const options = {
                     'method'  : 'POST',
                     'headers' : {
@@ -28,6 +29,7 @@ function DOMContentLoaded() {
                         'Accept'       : 'text/html',
                     },
                     'body'    : JSON.stringify({
+                        'zone' : zone,
                         'json' : textarea.value
                     })
                 };

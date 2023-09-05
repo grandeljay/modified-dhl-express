@@ -28,6 +28,7 @@ $translations = array(
 
     'WEIGHT_TITLE'      => 'Peso',
     'WEIGHT_DESC'       => 'Determine el peso ideal y el peso máximo.',
+    'WEIGHT_PER_KG'     => 'Precio por kg (de %s Kg)',
     'SHIPPING_TITLE'    => 'Envío',
     'SHIPPING_DESC'     => 'Peso, precios y configuración de los distintos métodos de envío de DHL Express.',
     'SURCHARGES_TITLE'  => 'Impactos',
