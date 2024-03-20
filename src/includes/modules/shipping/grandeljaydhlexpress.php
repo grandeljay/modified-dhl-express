@@ -20,7 +20,7 @@ class grandeljaydhlexpress extends StdModule
     private Installer $installer;
 
     public const VERSION     = '0.6.9';
-    public array $properties = array();
+    public array $properties = [];
 
     public static function weight(): string
     {
@@ -73,7 +73,7 @@ class grandeljaydhlexpress extends StdModule
      *
      * @var array
      */
-    public array $quotes = array();
+    public array $quotes = [];
 
     /**
      * Used to calculate the tax.

@@ -47,18 +47,18 @@ enum Zone: int
     public static function getCountries(Zone $zone): array
     {
         $countries = match ($zone) {
-            Zone::ONE   => array('BE', 'LU', 'NL'),
-            Zone::TWO   => array('AT', 'DK', 'FR'),
-            Zone::THREE => array('GB', 'IT', 'ES', 'CZ', 'PL'),
-            Zone::FOUR  => array('SE', 'SK', 'SI', 'HU', 'FI', 'EE', 'BG', 'GR', 'RO', 'HR', 'PT', 'LT', 'LV'),
-            Zone::FIVE  => array('NO', 'CH'),
-            Zone::SIX   => array('RS', 'AL', 'MD', 'BY', 'ME', 'BA', 'MK', 'TR', 'UA', 'XK', 'RU'),
-            Zone::SEVEN => array('US', 'CA', 'MX'),
-            Zone::EIGHT => array('TH', 'JP'),
-            Zone::NINE  => array('AU'),
-            Zone::TEN   => array('PR', 'DO', 'KG', 'KZ', 'PR', 'AL', 'AR'),
+            Zone::ONE   => ['BE', 'LU', 'NL'],
+            Zone::TWO   => ['AT', 'DK', 'FR'],
+            Zone::THREE => ['GB', 'IT', 'ES', 'CZ', 'PL'],
+            Zone::FOUR  => ['SE', 'SK', 'SI', 'HU', 'FI', 'EE', 'BG', 'GR', 'RO', 'HR', 'PT', 'LT', 'LV'],
+            Zone::FIVE  => ['NO', 'CH'],
+            Zone::SIX   => ['RS', 'AL', 'MD', 'BY', 'ME', 'BA', 'MK', 'TR', 'UA', 'XK', 'RU'],
+            Zone::SEVEN => ['US', 'CA', 'MX'],
+            Zone::EIGHT => ['TH', 'JP'],
+            Zone::NINE  => ['AU'],
+            Zone::TEN   => ['PR', 'DO', 'KG', 'KZ', 'PR', 'AL', 'AR'],
 
-            default => array(),
+            default => [],
         };
 
         return $countries;

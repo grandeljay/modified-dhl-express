@@ -4,7 +4,7 @@ namespace Grandeljay\DhlExpress;
 
 class Quote
 {
-    private array $calculations = array();
+    private array $calculations = [];
 
     private function getShippingCosts(Zone $zone): float
     {
@@ -27,14 +27,14 @@ class Quote
             if ($total_weight <= $cost['weight-max']) {
                 $costs = $cost['weight-costs'];
 
-                $this->calculations[] = array(
+                $this->calculations[] = [
                     'item'  => sprintf(
                         'Shipping weight is %s kg (tarif is %s kg).',
                         $total_weight,
                         $cost['weight-max']
                     ),
                     'costs' => $costs,
-                );
+                ];
 
                 break;
             }
@@ -52,14 +52,14 @@ class Quote
             if (0 === $costs) {
                 $costs = $cots_list_last['weight-costs'];
 
-                $this->calculations[] = array(
+                $this->calculations[] = [
                     'item'  => sprintf(
                         'No tarif defined for %s kg. Falling back to highest defined tarif (%s kg) for this zone.',
                         $total_weight,
                         $cots_list_last['weight-max']
                     ),
                     'costs' => $costs,
-                );
+                ];
             }
 
             /**
@@ -77,7 +77,7 @@ class Quote
                         $costs_to_add        = ceil($costs_per_kg_weight) * $costs_per_kg;
                         $costs              += $costs_to_add;
 
-                        $this->calculations[] = array(
+                        $this->calculations[] = [
                             'item'  => sprintf(
                                 'Total weight of %s exceeds highest tarif (%s Kg). Applying costs (%s €) per kg (%s kg).',
                                 $total_weight,
@@ -86,7 +86,7 @@ class Quote
                                 $costs_per_kg_weight
                             ),
                             'costs' => $costs_to_add,
-                        );
+                        ];
 
                         break;
                     }
@@ -114,7 +114,7 @@ class Quote
 
                 /** Skip iteration if date critera doesn't match */
                 if ($date_now < $date_from || $date_now > $date_to) {
-                    $this->calculations[] = array(
+                    $this->calculations[] = [
                         'item'  => sprintf(
                             'Surcharge %s has date set: %s - %s. Skipping surcharge...',
                             '<i>' . $surcharge['name'] . '</i>',
@@ -122,11 +122,11 @@ class Quote
                             $surcharge['date-to']
                         ),
                         'costs' => 0,
-                    );
+                    ];
 
                     continue;
                 } else {
-                    $this->calculations[] = array(
+                    $this->calculations[] = [
                         'item'  => sprintf(
                             'Surcharge %s has date set: %s - %s. Applying surcharge:',
                             '<i>' . $surcharge['name'] . '</i>',
@@ -134,7 +134,7 @@ class Quote
                             $surcharge['date-to']
                         ),
                         'costs' => 0,
-                    );
+                    ];
                 }
             }
 
@@ -151,7 +151,7 @@ class Quote
                 foreach ($order->products as $product_data) {
                     if ($product_data['weight'] >= $surcharge['weight']) {
                         /** Apply the surcharge */
-                        $this->calculations[] = array(
+                        $this->calculations[] = [
                             'item'  => sprintf(
                                 'Surcharge %s (%s kg) is %s %s for %s.',
                                 '<i>' . $surcharge['name'] . '</i>',
@@ -161,13 +161,13 @@ class Quote
                                 $product_data['model']
                             ),
                             'costs' => $amount,
-                        );
+                        ];
 
                         $surcharges += $amount;
                     }
                 }
             } else {
-                $this->calculations[] = array(
+                $this->calculations[] = [
                     'item'  => sprintf(
                         'Surcharge %s is %s %s.',
                         '<i>' . $surcharge['name'] . '</i>',
@@ -175,7 +175,7 @@ class Quote
                         $symbol
                     ),
                     'costs' => $amount,
-                );
+                ];
 
                 $surcharges += $amount;
             }
@@ -203,14 +203,14 @@ class Quote
             if ($total_weight <= $cost['weight-max']) {
                 $pick_pack_costs = $cost['weight-costs'];
 
-                $this->calculations[] = array(
+                $this->calculations[] = [
                     'item'  => sprintf(
                         'Pick & Pack for %s kg (tarif is %s kg).',
                         $total_weight,
                         $cost['weight-max']
                     ),
                     'costs' => $pick_pack_costs,
-                );
+                ];
 
                 break;
             }
@@ -238,9 +238,9 @@ class Quote
             return null;
         }
 
-        $methods = array();
+        $methods = [];
 
-        $method_express = array(
+        $method_express = [
             'id'    => 'express',
             'title' => sprintf(
                 'DHL Express (%s kg)<!-- BREAK -->Zone %s',
@@ -249,7 +249,7 @@ class Quote
             ),
             'cost'  => $this->getShippingCosts($country_zone),
             'type'  => 'express',
-        );
+        ];
         if ($method_express['cost'] > 0) {
             $methods[] = $method_express;
         }
@@ -267,12 +267,12 @@ class Quote
             if (0.9 !== $costs_decimals) {
                 $costs_rounded_up = $costs_without_decimals + 0.9;
 
-                $this->calculations[] = array(
+                $this->calculations[] = [
                     'item'  => sprintf(
                         'Rounding up',
                     ),
                     'costs' => $costs_rounded_up - $method['cost'],
-                );
+                ];
 
                 $method['cost'] = $costs_rounded_up;
             }
@@ -317,14 +317,14 @@ class Quote
         }
 
         /** Quote */
-        $quote = array(
+        $quote = [
             'id'      => self::class,
             'module'  => sprintf(
                 constant(Constants::MODULE_SHIPPING_NAME . '_TEXT_TITLE_WEIGHT'),
                 round($total_weight, 2)
             ),
             'methods' => $methods,
-        );
+        ];
 
         return $quote;
     }

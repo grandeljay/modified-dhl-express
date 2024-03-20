@@ -10,7 +10,7 @@
 
 use Grandeljay\DhlExpress\Constants;
 
-$translations = array(
+$translations = [
     /** Module */
     'TITLE'             => 'grandeljay - DHL Express',
     'TEXT_TITLE'        => 'DHL Express',
@@ -33,7 +33,7 @@ $translations = array(
     'SHIPPING_DESC'     => 'Poids, prix et paramètres des différents modes d\'expédition de DHL Express.',
     'SURCHARGES_TITLE'  => 'Suppléments',
     'SURCHARGES_DESC'   => 'Options relatives aux majorations',
-);
+];
 
 foreach ($translations as $key => $value) {
     $constant = Constants::MODULE_SHIPPING_NAME . '_' . $key;
