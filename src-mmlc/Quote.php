@@ -318,7 +318,7 @@ class Quote
 
         /** Quote */
         $quote = [
-            'id'      => self::class,
+            'id'      => \grandeljaydhlexpress::class,
             'module'  => sprintf(
                 constant(Constants::MODULE_SHIPPING_NAME . '_TEXT_TITLE_WEIGHT'),
                 round($total_weight, 2)
