@@ -86,6 +86,8 @@ class grandeljaydhlexpress extends StdModule
     {
         parent::__construct(Constants::MODULE_SHIPPING_NAME);
 
+        $this->checkForUpdate(true);
+
         $this->addKey('SORT_ORDER');
 
         $this->addKey('WEIGHT');
@@ -107,6 +109,17 @@ class grandeljaydhlexpress extends StdModule
         $this->addConfigurationSurcharges();
 
         $this->installer->installAdminAccess();
+    }
+
+    protected function updateSteps(): int
+    {
+        if (version_compare($this->getVersion(), self::VERSION, '<')) {
+            $this->setVersion(self::VERSION);
+
+            return self::UPDATE_SUCCESS;
+        }
+
+        return self::UPDATE_NOTHING;
     }
 
     private function addConfigurationWeight(): void
