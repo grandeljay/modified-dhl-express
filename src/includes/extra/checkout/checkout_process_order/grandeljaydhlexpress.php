@@ -14,6 +14,10 @@ if (\rth_is_module_disabled(Constants::MODULE_SHIPPING_NAME)) {
     return;
 }
 
+if ('grandeljaydhlexpress_express' !== $order->info['shipping_class']) {
+    return;
+}
+
 /**
  * Simplify and update shipping name
  */
