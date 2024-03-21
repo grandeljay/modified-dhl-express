@@ -10,6 +10,10 @@
 
 namespace Grandeljay\DhlExpress;
 
+if (\rth_is_module_disabled(Constants::MODULE_SHIPPING_NAME)) {
+    return;
+}
+
 /**
  * Simplify and update shipping name
  */
