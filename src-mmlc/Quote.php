@@ -222,9 +222,37 @@ class Quote
         return $surcharges;
     }
 
+    private function getShippingWeight(): float
+    {
+        global $order;
+
+        $shipping_weight = 0;
+
+        foreach ($order->products as $product) {
+            $length = $product['length'] ?? 0;
+            $width  = $product['width']  ?? 0;
+            $height = $product['height'] ?? 0;
+            $weight = ($product['weight'] ?? 0) * $product['quantity'];
+
+            if ($length > 0 && $width > 0 && $height > 0) {
+                $volumetric_weight = (($length * $width * $height) / 5000) * $product['quantity'];
+
+                if ($volumetric_weight > $weight) {
+                    $weight = $volumetric_weight;
+                }
+            }
+
+            $shipping_weight += $weight;
+        }
+
+        return $shipping_weight;
+    }
+
     public function getQuote(): ?array
     {
-        global $order, $total_weight;
+        global $order;
+
+        $shipping_weight = $this->getShippingWeight();
 
         $country_code = $order->delivery['country']['iso_code_2'] ?? null;
 
@@ -244,7 +272,7 @@ class Quote
             'id'    => 'express',
             'title' => sprintf(
                 'DHL Express (%s kg)<!-- BREAK -->Zone %s',
-                round($total_weight, 2),
+                round($shipping_weight, 2),
                 $country_zone->value
             ),
             'cost'  => $this->getShippingCosts($country_zone),
@@ -321,7 +349,7 @@ class Quote
             'id'      => \grandeljaydhlexpress::class,
             'module'  => sprintf(
                 constant(Constants::MODULE_SHIPPING_NAME . '_TEXT_TITLE_WEIGHT'),
-                round($total_weight, 2)
+                round($shipping_weight, 2)
             ),
             'methods' => $methods,
         ];
