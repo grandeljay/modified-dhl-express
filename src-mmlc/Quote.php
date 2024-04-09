@@ -29,7 +29,7 @@ class Quote
 
                 $this->calculations[] = [
                     'item'  => sprintf(
-                        'Shipping weight is %s kg (tarif is %s kg).',
+                        'Shipping weight is <code>%01.2f</code> kg (tarif is <code>%01.2f</code> kg).',
                         $total_weight,
                         $cost['weight-max']
                     ),
@@ -54,7 +54,7 @@ class Quote
 
                 $this->calculations[] = [
                     'item'  => sprintf(
-                        'No tarif defined for %s kg. Falling back to highest defined tarif (%s kg) for this zone.',
+                        'No tarif defined for <code>%01.2f</code> kg. Falling back to highest defined tarif (<code>%01.2f</code> kg) for this zone.',
                         $total_weight,
                         $cots_list_last['weight-max']
                     ),
@@ -79,7 +79,7 @@ class Quote
 
                         $this->calculations[] = [
                             'item'  => sprintf(
-                                'Total weight of %s exceeds highest tarif (%s Kg). Applying costs (%s €) per kg (%s kg).',
+                                'Total weight of <code>%01.2f</code> exceeds highest tarif (<code>%01.2f</code> Kg). Applying costs (<code>%01.2f</code> €) per kg (<code>%01.2f</code> kg).',
                                 $total_weight,
                                 $costs_tarif['weight-max'] ?? 0,
                                 $costs_per_kg,
@@ -153,7 +153,7 @@ class Quote
                         /** Apply the surcharge */
                         $this->calculations[] = [
                             'item'  => sprintf(
-                                'Surcharge %s (%s kg) is %s %s for %s.',
+                                'Surcharge %s (<code>%01.2f</code> kg) is <code>%01.2f</code> %s for %s.',
                                 '<i>' . $surcharge['name'] . '</i>',
                                 $surcharge['weight'],
                                 $surcharge['costs'],
@@ -169,7 +169,7 @@ class Quote
             } else {
                 $this->calculations[] = [
                     'item'  => sprintf(
-                        'Surcharge %s is %s %s.',
+                        'Surcharge %s is <code>%01.2f</code> %s.',
                         '<i>' . $surcharge['name'] . '</i>',
                         $surcharge['costs'],
                         $symbol
@@ -205,7 +205,7 @@ class Quote
 
                 $this->calculations[] = [
                     'item'  => sprintf(
-                        'Pick & Pack for %s kg (tarif is %s kg).',
+                        'Pick & Pack for <code>%01.2f</code> kg (tarif is <code>%01.2f</code> kg).',
                         $total_weight,
                         $cost['weight-max']
                     ),
@@ -318,12 +318,17 @@ class Quote
                 <br><br>
 
                 <h3>Debug mode</h3>
-                <table>
+                <style type="text/css">
+                    table.calculations :is(th, td).number {
+                        text-align: right;
+                    }
+                </style>
+                <table class="calculations">
                     <thead>
                         <tr>
                             <th>Item</th>
-                            <th>Costs</th>
-                            <th>Total</th>
+                            <th class="number">Costs</th>
+                            <th class="number">Total</th>
                         </tr>
                     </thead>
 
@@ -333,8 +338,8 @@ class Quote
 
                             <tr>
                                 <td><?= $calculation['item'] ?></td>
-                                <td><?= $calculation['costs'] ?></td>
-                                <td><?= $total ?></td>
+                                <td class="number"><code><?= sprintf('%01.2f', $calculation['costs']) ?></code></td>
+                                <td class="number"><code><?= sprintf('%01.2f', $total) ?></code></td>
                             </tr>
                         <?php } ?>
                     </tbody>
