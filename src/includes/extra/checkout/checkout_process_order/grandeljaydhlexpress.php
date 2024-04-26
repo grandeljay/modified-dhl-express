@@ -27,7 +27,7 @@ $language_file = \sprintf(
     \grandeljaydhlexpress::class
 );
 
-require $language_file;
+require_once $language_file;
 
 $simplified_name = sprintf(
     constant(Constants::MODULE_SHIPPING_NAME . '_TEXT_TITLE_WEIGHT'),
