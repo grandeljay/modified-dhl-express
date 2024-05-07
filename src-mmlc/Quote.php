@@ -4,9 +4,7 @@ namespace Grandeljay\DhlExpress;
 
 class Quote
 {
-    private array $calculations = [];
-
-    private function getShippingCosts(Zone $zone): float
+    private function setShippingCosts(array &$method, Zone $zone): void
     {
         global $total_weight;
 
@@ -21,13 +19,12 @@ class Quote
             }
         );
 
-        $costs = 0;
-
         foreach ($costs_list as $cost) {
             if ($total_weight <= $cost['weight-max']) {
                 $costs = $cost['weight-costs'];
 
-                $this->calculations[] = [
+                $method['cost']           = $costs;
+                $method['calculations'][] = [
                     'item'  => sprintf(
                         'Shipping weight is <code>%01.2f</code> kg (tarif is <code>%01.2f</code> kg).',
                         $total_weight,
@@ -49,10 +46,11 @@ class Quote
             /**
              * Total weight exceeds highest defined tarif
              */
-            if (0 === $costs) {
+            if (0 === $method['cost']) {
                 $costs = $cots_list_last['weight-costs'];
 
-                $this->calculations[] = [
+                $method['cost']           = $costs;
+                $method['calculations'][] = [
                     'item'  => sprintf(
                         'No tarif defined for <code>%01.2f</code> kg. Falling back to highest defined tarif (<code>%01.2f</code> kg) for this zone.',
                         $total_weight,
@@ -75,9 +73,9 @@ class Quote
                         $costs_tarif         = end($costs_list);
                         $costs_per_kg_weight = $total_weight - $costs_tarif['weight-max'];
                         $costs_to_add        = ceil($costs_per_kg_weight) * $costs_per_kg;
-                        $costs              += $costs_to_add;
 
-                        $this->calculations[] = [
+                        $method['cost']          += $costs_to_add;
+                        $method['calculations'][] = [
                             'item'  => sprintf(
                                 'Total weight of <code>%01.2f</code> exceeds highest tarif (<code>%01.2f</code> Kg). Applying costs (<code>%01.2f</code> €) per kg (<code>%01.2f</code> kg).',
                                 $total_weight,
@@ -93,11 +91,9 @@ class Quote
                 }
             }
         }
-
-        return $costs;
     }
 
-    private function getSurcharges(float $method_costs): float
+    private function setSurcharges(array &$method): void
     {
         global $order;
 
@@ -114,7 +110,7 @@ class Quote
 
                 /** Skip iteration if date critera doesn't match */
                 if ($date_now < $date_from || $date_now > $date_to) {
-                    $this->calculations[] = [
+                    $method['calculations'][] = [
                         'item'  => sprintf(
                             'Surcharge %s has date set: %s - %s. Skipping surcharge...',
                             '<i>' . $surcharge['name'] . '</i>',
@@ -126,7 +122,7 @@ class Quote
 
                     continue;
                 } else {
-                    $this->calculations[] = [
+                    $method['calculations'][] = [
                         'item'  => sprintf(
                             'Surcharge %s has date set: %s - %s. Applying surcharge:',
                             '<i>' . $surcharge['name'] . '</i>',
@@ -140,7 +136,7 @@ class Quote
 
             $amount = match ($surcharge['type']) {
                 'fixed'   => $surcharge['costs'],
-                'percent' => $method_costs * ($surcharge['costs'] / 100),
+                'percent' => $method['cost'] * ($surcharge['costs'] / 100),
             };
             $symbol = match ($surcharge['type']) {
                 'fixed'   => '€',
@@ -151,7 +147,8 @@ class Quote
                 foreach ($order->products as $product_data) {
                     if ($product_data['weight'] >= $surcharge['weight']) {
                         /** Apply the surcharge */
-                        $this->calculations[] = [
+                        $method['cost']          += $amount;
+                        $method['calculations'][] = [
                             'item'  => sprintf(
                                 'Surcharge %s (<code>%01.2f</code> kg) is <code>%01.2f</code> %s for %s.',
                                 '<i>' . $surcharge['name'] . '</i>',
@@ -162,12 +159,11 @@ class Quote
                             ),
                             'costs' => $amount,
                         ];
-
-                        $surcharges += $amount;
                     }
                 }
             } else {
-                $this->calculations[] = [
+                $method['cost']          += $amount;
+                $method['calculations'][] = [
                     'item'  => sprintf(
                         'Surcharge %s is <code>%01.2f</code> %s.',
                         '<i>' . $surcharge['name'] . '</i>',
@@ -203,7 +199,8 @@ class Quote
             if ($total_weight <= $cost['weight-max']) {
                 $pick_pack_costs = $cost['weight-costs'];
 
-                $this->calculations[] = [
+                $method['cost']          += $pick_pack_costs;
+                $method['calculations'][] = [
                     'item'  => sprintf(
                         'Pick & Pack for <code>%01.2f</code> kg (tarif is <code>%01.2f</code> kg).',
                         $total_weight,
@@ -215,11 +212,6 @@ class Quote
                 break;
             }
         }
-
-        $surcharges += $pick_pack_costs;
-
-
-        return $surcharges;
     }
 
     private function getShippingWeight(): float
@@ -269,22 +261,36 @@ class Quote
         $methods = [];
 
         $method_express = [
-            'id'    => 'express',
-            'title' => sprintf(
+            'id'           => 'express',
+            'title'        => sprintf(
                 'DHL Express (%s kg)<!-- BREAK -->Zone %s',
                 round($shipping_weight, 2),
                 $country_zone->value
             ),
-            'cost'  => $this->getShippingCosts($country_zone),
-            'type'  => 'express',
+            'cost'         => 0,
+            'calculations' => [],
+            'type'         => 'express',
         ];
+
+        $this->setShippingCosts($method_express, $country_zone);
+
         if ($method_express['cost'] > 0) {
             $methods[] = $method_express;
         }
 
         /** Surcharges */
         foreach ($methods as &$method) {
-            $method['cost'] += $this->getSurcharges($method['cost']);
+            $this->setSurcharges($method);
+        }
+
+        if (\class_exists('Grandeljay\ShippingConditions\Surcharges')) {
+            $surcharges = new \Grandeljay\ShippingConditions\Surcharges(
+                \grandeljaydhlexpress::class,
+                $methods
+            );
+            $surcharges->setSurcharges();
+
+            $methods = $surcharges->getMethods();
         }
 
         /** Round up */
@@ -293,16 +299,15 @@ class Quote
             $costs_decimals         = $method['cost'] - $costs_without_decimals;
 
             if (0.9 !== $costs_decimals) {
-                $costs_rounded_up = $costs_without_decimals + 0.9;
+                $costs = 0.9 - $costs_decimals;
 
-                $this->calculations[] = [
+                $method['cost']          += $costs;
+                $method['calculations'][] = [
                     'item'  => sprintf(
                         'Rounding up',
                     ),
-                    'costs' => $costs_rounded_up - $method['cost'],
+                    'costs' => $costs,
                 ];
-
-                $method['cost'] = $costs_rounded_up;
             }
         }
 
@@ -318,28 +323,23 @@ class Quote
                 <br><br>
 
                 <h3>Debug mode</h3>
-                <style type="text/css">
-                    table.calculations :is(th, td).number {
-                        text-align: right;
-                    }
-                </style>
-                <table class="calculations">
+                <table>
                     <thead>
                         <tr>
                             <th>Item</th>
-                            <th class="number">Costs</th>
-                            <th class="number">Total</th>
+                            <th>Costs</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        <?php foreach ($this->calculations as $calculation) { ?>
+                        <?php foreach ($method['calculations'] as $calculation) { ?>
                             <?php $total += $calculation['costs']; ?>
 
                             <tr>
                                 <td><?= $calculation['item'] ?></td>
-                                <td class="number"><code><?= sprintf('%01.2f', $calculation['costs']) ?></code></td>
-                                <td class="number"><code><?= sprintf('%01.2f', $total) ?></code></td>
+                                <td><?= \sprintf('%01.2f', $calculation['costs']) ?></td>
+                                <td><?= \sprintf('%01.2f', $total) ?></td>
                             </tr>
                         <?php } ?>
                     </tbody>
