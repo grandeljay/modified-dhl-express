@@ -214,32 +214,6 @@ class Quote
         }
     }
 
-    private function getShippingWeight(): float
-    {
-        global $order;
-
-        $shipping_weight = 0;
-
-        foreach ($order->products as $product) {
-            $length = $product['length'] ?? 0;
-            $width  = $product['width']  ?? 0;
-            $height = $product['height'] ?? 0;
-            $weight = ($product['weight'] ?? 0) * $product['quantity'];
-
-            if ($length > 0 && $width > 0 && $height > 0) {
-                $volumetric_weight = (($length * $width * $height) / 5000) * $product['quantity'];
-
-                if ($volumetric_weight > $weight) {
-                    $weight = $volumetric_weight;
-                }
-            }
-
-            $shipping_weight += $weight;
-        }
-
-        return $shipping_weight;
-    }
-
     public function getQuote(): ?array
     {
         global $order;
