@@ -244,8 +244,6 @@ class Quote
     {
         global $order;
 
-        $shipping_weight = $this->getShippingWeight();
-
         $country_code = $order->delivery['country']['iso_code_2'] ?? null;
 
         if (null === $country_code) {
@@ -258,13 +256,25 @@ class Quote
             return null;
         }
 
+        $shipping_weight_ideal   = \constant(Constants::MODULE_SHIPPING_NAME . '_WEIGHT_IDEAL');
+        $shipping_weight_maximum = \constant(Constants::MODULE_SHIPPING_NAME . '_WEIGHT_MAXIMUM');
+
+        $order_packer = new \Grandeljay\ShippingModuleHelper\OrderPacker();
+        $order_packer->setIdealWeight($shipping_weight_ideal);
+        $order_packer->setMaximumWeight($shipping_weight_maximum);
+        $order_packer->packOrder();
+
+        $boxes            = $order_packer->getBoxes();
+        $weight           = $order_packer->getWeight();
+        $weight_formatted = $order_packer->getWeightFormatted();
+
         $methods = [];
 
         $method_express = [
             'id'           => 'express',
             'title'        => sprintf(
-                'DHL Express (%s kg)<!-- BREAK -->Zone %s',
-                round($shipping_weight, 2),
+                'DHL Express (%s)<!-- BREAK -->Zone %s',
+                $weight_formatted,
                 $country_zone->value
             ),
             'cost'         => 0,
@@ -358,7 +368,7 @@ class Quote
             'id'      => \grandeljaydhlexpress::class,
             'module'  => sprintf(
                 constant(Constants::MODULE_SHIPPING_NAME . '_TEXT_TITLE_WEIGHT'),
-                round($shipping_weight, 2)
+                $weight
             ),
             'methods' => $methods,
         ];
