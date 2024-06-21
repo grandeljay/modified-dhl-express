@@ -13,35 +13,17 @@
 
 use Grandeljay\DhlExpress\{Constants, Installer, Quote, Zone};
 use Grandeljay\DhlExpress\Field\{Shipping, Surcharges, Weight};
+use Grandeljay\DhlExpress\Trait\Field;
 use RobinTheHood\ModifiedStdModule\Classes\StdModule;
 
 class grandeljaydhlexpress extends StdModule
 {
+    use Field;
+
     private Installer $installer;
 
     public const VERSION     = '0.9.1';
     public array $properties = [];
-
-    public static function weight(): string
-    {
-        $html = Weight::getWeight();
-
-        return $html;
-    }
-
-    public static function shipping(): string
-    {
-        $html = Shipping::getInternational();
-
-        return $html;
-    }
-
-    public static function surcharges(string $value, string $option): string
-    {
-        $html = Surcharges::getSurchargesGroup($value, $option);
-
-        return $html;
-    }
 
     public static function userMayAccessAPI(): bool
     {
