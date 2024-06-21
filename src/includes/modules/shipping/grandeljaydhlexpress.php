@@ -24,7 +24,6 @@ class grandeljaydhlexpress extends StdModule
 
 
     public const VERSION     = '0.9.1';
-    public array $properties = [];
 
     public static function userMayAccessAPI(): bool
     {
