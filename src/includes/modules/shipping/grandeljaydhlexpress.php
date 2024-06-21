@@ -22,8 +22,7 @@ class grandeljaydhlexpress extends StdModule
     use Module\Keys;
     use Module\Installer;
 
-
-    public const VERSION     = '0.9.1';
+    public const VERSION = '0.9.1';
 
     public static function userMayAccessAPI(): bool
     {
