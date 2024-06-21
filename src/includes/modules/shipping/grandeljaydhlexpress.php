@@ -12,7 +12,6 @@
  */
 
 use Grandeljay\DhlExpress\{Constants, Installer, Quote, Zone};
-use Grandeljay\DhlExpress\Field\{Shipping, Surcharges, Weight};
 use Grandeljay\DhlExpress\Trait\Field;
 use RobinTheHood\ModifiedStdModule\Classes\StdModule;
 
