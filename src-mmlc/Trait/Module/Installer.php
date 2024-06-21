@@ -2,6 +2,7 @@
 
 namespace Grandeljay\DhlExpress\Trait\Module;
 
+use Grandeljay\DhlExpress\Class\Defaults;
 use Grandeljay\DhlExpress\Zone;
 
 trait Installer
@@ -32,17 +33,17 @@ trait Installer
 
             $configuration_key    = sprintf('SHIPPING_ZONE%s', $number);
             $configuration_method = sprintf('getShippingZone%s', $number);
-            $configuration_value  = $this->installer->$configuration_method();
+            $configuration_value  = Defaults::$configuration_method();
 
             $this->addConfiguration($configuration_key, $configuration_value, 6, 1);
         }
 
-        $this->addConfiguration('SHIPPING_ZONE_PER_KG', $this->installer->getShippingZonePerKg(), 6, 1);
+        $this->addConfiguration('SHIPPING_ZONE_PER_KG', Defaults::getShippingZonePerKg(), 6, 1);
     }
 
     private function addConfigurationSurcharges(): void
     {
-        $this->addConfiguration('SURCHARGES', $this->installer->getSurcharges(), 6, 1, self::class . '::surcharges(');
-        $this->addConfiguration('PICK_PACK', $this->installer->getPickPack(), 6, 1);
+        $this->addConfiguration('SURCHARGES', Defaults::getSurcharges(), 6, 1, \grandeljaydhlexpress::class . '::surcharges(');
+        $this->addConfiguration('PICK_PACK', Defaults::getPickPack(), 6, 1);
     }
 }
