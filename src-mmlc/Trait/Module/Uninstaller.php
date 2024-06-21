@@ -14,8 +14,6 @@ trait Installer
         $this->removeConfigurationWeight();
         $this->removeConfigurationShipping();
         $this->removeConfigurationSurcharges();
-
-        $this->deleteAdminAccess(\grandeljaydhlexpress::class);
     }
 
     private function removeConfigurationWeight(): void

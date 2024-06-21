@@ -76,7 +76,7 @@ class grandeljaydhlexpress extends StdModule
         parent::install();
 
         $this->addConfigurations();
-        $this->setAdminAccess(\grandeljaydhlexpress::class);
+        $this->setAdminAccess(self::class);
     }
 
     protected function updateSteps(): int
@@ -95,6 +95,7 @@ class grandeljaydhlexpress extends StdModule
         parent::remove();
 
         $this->removeConfigurations();
+        $this->deleteAdminAccess(self::class);
     }
 
     /**
