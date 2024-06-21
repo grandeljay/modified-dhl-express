@@ -1,8 +1,8 @@
 <?php
 
-namespace Grandeljay\DhlExpress\Trait;
+namespace Grandeljay\DhlExpress\Trait\Module;
 
-trait ModuleKeys
+trait Keys
 {
     private function addKeys(): void
     {

@@ -13,13 +13,13 @@
 
 use Grandeljay\DhlExpress\{Constants, Installer, Quote, Zone};
 use Grandeljay\DhlExpress\Trait\Field;
-use Grandeljay\DhlExpress\Trait\ModuleKeys;
+use Grandeljay\DhlExpress\Trait\Module;
 use RobinTheHood\ModifiedStdModule\Classes\StdModule;
 
 class grandeljaydhlexpress extends StdModule
 {
     use Field;
-    use ModuleKeys;
+    use Module\Keys;
 
     private Installer $installer;
 
