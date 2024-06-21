@@ -2,7 +2,7 @@
 
 namespace Grandeljay\DhlExpress\Trait\Module;
 
-use Grandeljay\DhlExpress\Zone;
+use Grandeljay\DhlExpress\Enum\Zone;
 
 trait Uninstaller
 {

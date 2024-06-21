@@ -1,6 +1,6 @@
 <?php
 
-namespace Grandeljay\DhlExpress;
+namespace Grandeljay\DhlExpress\Enum;
 
 enum Zone: int
 {

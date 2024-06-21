@@ -2,7 +2,8 @@
 
 namespace Grandeljay\DhlExpress\Field;
 
-use Grandeljay\DhlExpress\{Constants, Zone};
+use Grandeljay\DhlExpress\Constants;
+use Grandeljay\DhlExpress\Enum\Zone;
 
 class Shipping
 {
