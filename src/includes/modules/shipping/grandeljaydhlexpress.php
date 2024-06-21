@@ -21,6 +21,7 @@ class grandeljaydhlexpress extends StdModule
     use Field;
     use Module\Keys;
     use Module\Installer;
+    use Module\Uninstaller;
 
     public const VERSION = '0.9.1';
 

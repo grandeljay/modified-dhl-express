@@ -4,7 +4,7 @@ namespace Grandeljay\DhlExpress\Trait\Module;
 
 use Grandeljay\DhlExpress\Zone;
 
-trait Installer
+trait Uninstaller
 {
     private function removeConfigurations(): void
     {
