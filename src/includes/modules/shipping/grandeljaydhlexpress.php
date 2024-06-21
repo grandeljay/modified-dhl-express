@@ -11,7 +11,8 @@
  * @phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
  */
 
- use Grandeljay\DhlExpress\{Constants, Quote};
+use Grandeljay\DhlExpress\Constants;
+use Grandeljay\DhlExpress\Quote;
 use Grandeljay\DhlExpress\Trait\Field;
 use Grandeljay\DhlExpress\Trait\Module;
 use RobinTheHood\ModifiedStdModule\Classes\StdModule;
