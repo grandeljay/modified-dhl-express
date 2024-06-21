@@ -13,11 +13,13 @@
 
 use Grandeljay\DhlExpress\{Constants, Installer, Quote, Zone};
 use Grandeljay\DhlExpress\Trait\Field;
+use Grandeljay\DhlExpress\Trait\ModuleKeys;
 use RobinTheHood\ModifiedStdModule\Classes\StdModule;
 
 class grandeljaydhlexpress extends StdModule
 {
     use Field;
+    use ModuleKeys;
 
     private Installer $installer;
 
@@ -68,12 +70,7 @@ class grandeljaydhlexpress extends StdModule
         parent::__construct(Constants::MODULE_SHIPPING_NAME);
 
         $this->checkForUpdate(true);
-
-        $this->addKey('SORT_ORDER');
-
-        $this->addKey('WEIGHT');
-        $this->addKey('SHIPPING');
-        $this->addKey('SURCHARGES');
+        $this->addKeys();
 
         $this->installer = new Installer();
     }
