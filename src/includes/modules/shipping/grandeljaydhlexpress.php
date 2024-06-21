@@ -11,7 +11,7 @@
  * @phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
  */
 
-use Grandeljay\DhlExpress\{Constants, Installer, Quote, Zone};
+use Grandeljay\DhlExpress\{Constants, Quote, Zone};
 use Grandeljay\DhlExpress\Trait\Field;
 use Grandeljay\DhlExpress\Trait\Module;
 use RobinTheHood\ModifiedStdModule\Classes\StdModule;
@@ -20,8 +20,8 @@ class grandeljaydhlexpress extends StdModule
 {
     use Field;
     use Module\Keys;
+    use Module\Installer;
 
-    private Installer $installer;
 
     public const VERSION     = '0.9.1';
     public array $properties = [];
@@ -71,22 +71,14 @@ class grandeljaydhlexpress extends StdModule
 
         $this->checkForUpdate(true);
         $this->addKeys();
-
-        $this->installer = new Installer();
     }
 
     public function install()
     {
         parent::install();
 
-        $this->addConfiguration('ALLOWED', '', 6, 1);
-        $this->addConfiguration('SORT_ORDER', 2, 6, 1);
-
-        $this->addConfigurationWeight();
-        $this->addConfigurationShipping();
-        $this->addConfigurationSurcharges();
-
-        $this->installer->installAdminAccess();
+        $this->addConfigurations();
+        $this->setAdminAccess(\grandeljaydhlexpress::class);
     }
 
     protected function updateSteps(): int
@@ -98,36 +90,6 @@ class grandeljaydhlexpress extends StdModule
         }
 
         return self::UPDATE_NOTHING;
-    }
-
-    private function addConfigurationWeight(): void
-    {
-        $this->addConfiguration('WEIGHT', '', 6, 1, \grandeljaydhlexpress::class . '::weight(');
-        $this->addConfiguration('WEIGHT_IDEAL', round(SHIPPING_MAX_WEIGHT * 0.75), 6, 1);
-        $this->addConfiguration('WEIGHT_MAXIMUM', SHIPPING_MAX_WEIGHT, 6, 1);
-    }
-
-    private function addConfigurationShipping(): void
-    {
-        $this->addConfiguration('SHIPPING', '', 6, 1, \grandeljaydhlexpress::class . '::shipping(');
-
-        foreach (Zone::cases() as $zone) {
-            $number = $zone->value;
-
-            $configuration_key    = sprintf('SHIPPING_ZONE%s', $number);
-            $configuration_method = sprintf('getShippingZone%s', $number);
-            $configuration_value  = $this->installer->$configuration_method();
-
-            $this->addConfiguration($configuration_key, $configuration_value, 6, 1);
-        }
-
-        $this->addConfiguration('SHIPPING_ZONE_PER_KG', $this->installer->getShippingZonePerKg(), 6, 1);
-    }
-
-    private function addConfigurationSurcharges(): void
-    {
-        $this->addConfiguration('SURCHARGES', $this->installer->getSurcharges(), 6, 1, self::class . '::surcharges(');
-        $this->addConfiguration('PICK_PACK', $this->installer->getPickPack(), 6, 1);
     }
 
     public function remove()
