@@ -166,6 +166,8 @@ class grandeljaydhlexpress extends StdModule
 
             $this->removeConfiguration($configuration_key);
         }
+
+        $this->removeConfiguration('SHIPPING_ZONE_PER_KG');
     }
 
     private function removeConfigurationSurcharges(): void
