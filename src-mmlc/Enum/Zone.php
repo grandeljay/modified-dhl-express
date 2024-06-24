@@ -2,6 +2,8 @@
 
 namespace Grandeljay\DhlExpress\Enum;
 
+use Grandeljay\DhlExpress\Constants;
+
 enum Zone: int
 {
     case ONE   = 1;
@@ -46,20 +48,18 @@ enum Zone: int
 
     public static function getCountries(Zone $zone): array
     {
-        $countries = match ($zone) {
-            Zone::ONE   => ['BE', 'LU', 'NL'],
-            Zone::TWO   => ['AT', 'DK', 'FR'],
-            Zone::THREE => ['GB', 'IT', 'ES', 'CZ', 'PL'],
-            Zone::FOUR  => ['SE', 'SK', 'SI', 'HU', 'FI', 'EE', 'BG', 'GR', 'RO', 'HR', 'PT', 'LT', 'LV'],
-            Zone::FIVE  => ['NO', 'CH'],
-            Zone::SIX   => ['RS', 'AL', 'MD', 'BY', 'ME', 'BA', 'MK', 'TR', 'UA', 'XK', 'RU'],
-            Zone::SEVEN => ['US', 'CA', 'MX'],
-            Zone::EIGHT => ['TH', 'JP'],
-            Zone::NINE  => ['AU'],
-            Zone::TEN   => ['PR', 'DO', 'KG', 'KZ', 'PR', 'AL', 'AR'],
-
-            default => [],
-        };
+        $constant  = \sprintf(
+            '%s_%s%d',
+            Constants::MODULE_SHIPPING_NAME,
+            'SHIPPING_ZONE',
+            $zone->value
+        );
+        $value     = \constant($constant);
+        $json      = \json_decode($value, true);
+        $countries = \array_map(
+            'trim',
+            \explode(',', $json['countries'])
+        );
 
         return $countries;
     }

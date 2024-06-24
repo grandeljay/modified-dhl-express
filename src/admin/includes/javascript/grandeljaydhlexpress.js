@@ -81,6 +81,15 @@ function documentChange(event) {
 
 document.addEventListener('change', documentChange);
 
+function zoneChange() {
+    let apiElement   = this.closest('details').querySelector('[data-url]');
+    let apiValueJson = JSON.parse(apiElement.value);
+
+    apiValueJson.countries = this.value;
+
+    apiElement.value = JSON.stringify(apiValueJson);
+}
+
 function inputWeightChange() {
     let table     = this.closest('table');
     let tableRows = table.querySelectorAll('tbody > tr');

@@ -11,7 +11,9 @@
  * @phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
  */
 
+use Grandeljay\DhlExpress\Class\Defaults;
 use Grandeljay\DhlExpress\Constants;
+use Grandeljay\DhlExpress\Enum\Zone;
 use Grandeljay\DhlExpress\Quote;
 use Grandeljay\DhlExpress\Trait\Field;
 use Grandeljay\DhlExpress\Trait\Module;
@@ -83,8 +85,37 @@ class grandeljaydhlexpress extends StdModule
 
     protected function updateSteps(): int
     {
-        if (version_compare($this->getVersion(), self::VERSION, '<')) {
-            $this->setVersion(self::VERSION);
+        $version_before_update = $this->getVersion();
+        $version_after_update  = self::VERSION;
+
+        if (version_compare($version_before_update, '0.9.1', '<=')) {
+            foreach (Zone::cases() as $zone) {
+                $number = $zone->value;
+
+                $configuration_key      = sprintf('SHIPPING_ZONE%s', $number);
+                $configuration_method   = sprintf('getShippingZone%s', $number);
+                $configuration_default  = Defaults::$configuration_method();
+                $configuration_existing = $this->getConfig($configuration_key);
+
+                $countries_json = \json_decode($configuration_default, true);
+                $countries      = implode(',', $countries_json['countries']);
+                $tariffs_json   = \json_decode($configuration_existing, true);
+                $tariffs        = $tariffs_json;
+
+                $configuration_value = \json_encode(
+                    [
+                        'countries' => $countries,
+                        'tariffs'   => $tariffs,
+                    ]
+                );
+
+                $this->removeConfiguration($configuration_key);
+                $this->addConfiguration($configuration_key, $configuration_value, 6, 1);
+            }
+        }
+
+        if (version_compare($version_before_update, $version_after_update, '<')) {
+            $this->setVersion($version_after_update);
 
             return self::UPDATE_SUCCESS;
         }

@@ -10,15 +10,13 @@
 
 namespace Grandeljay\DhlExpress;
 
-use grandeljaydhlexpress;
-
 chdir('../../../../..');
 
 require 'includes/application_top.php';
 require DIR_WS_MODULES . 'shipping/grandeljaydhlexpress.php';
-require \DIR_WS_LANGUAGES .  $_SESSION['language'] . '/modules/shipping/' . grandeljaydhlexpress::class . '.php';
+require \DIR_WS_LANGUAGES .  $_SESSION['language'] . '/modules/shipping/' . \grandeljaydhlexpress::class . '.php';
 
-if (!grandeljaydhlexpress::userMayAccessAPI()) {
+if (!\grandeljaydhlexpress::userMayAccessAPI()) {
     http_response_code(403);
 
     echo 'Access denied.';
@@ -34,16 +32,30 @@ if (false === $jsonEncoded) {
 
 $jsonDecoded = json_decode($jsonEncoded, true, 512, JSON_THROW_ON_ERROR);
 $entries     = json_decode($jsonDecoded['json'], true, 512, JSON_THROW_ON_ERROR);
+$tariffs     = $entries['tariffs'];
+$countries   = \array_map(
+    'trim',
+    \explode(
+        ',',
+        $entries['countries']
+    )
+);
 
-usort(
-    $entries,
+\uasort(
+    $tariffs,
     function ($entry_a, $entry_b) {
         return $entry_a['weight-max'] <=> $entry_b['weight-max'];
     }
 );
 
+$countries_value = \implode(', ', $countries);
+
 ob_start();
 ?>
+
+Betrifft die Länder:<br>
+<input type="text" value="<?= $countries_value ?>" data-name="countries" data-function="zoneChange">
+
 <table data-function="inputWeightChange">
     <thead>
         <tr>
@@ -57,10 +69,10 @@ ob_start();
     </thead>
 
     <tbody>
-        <?php foreach ($entries as $data) { ?>
+        <?php foreach ($tariffs as $tariff) { ?>
             <tr>
-                <td><input type="number" step="any" value="<?= $data['weight-max'] ?>" data-name="weight-max"></td>
-                <td><input type="number" step="any" value="<?= $data['weight-costs'] ?>" data-name="weight-costs"></td>
+                <td><input type="number" step="any" value="<?= $tariff['weight-max'] ?>" data-name="weight-max"></td>
+                <td><input type="number" step="any" value="<?= $tariff['weight-costs'] ?>" data-name="weight-costs"></td>
                 <td>
                     <button type="button" value="remove">
                         <img src="images/icons/cross.gif">
@@ -77,7 +89,7 @@ ob_start();
         $shippingZonePerKg        = \constant(Constants::MODULE_SHIPPING_NAME . '_SHIPPING_ZONE_PER_KG');
         $shippingZonePerKgEntries = \json_decode($shippingZonePerKg, true);
 
-        $maxDefinedWeight = end($entries)['weight-max'] ?? 0;
+        $maxDefinedWeight = end($tariffs)['weight-max'] ?? 0;
 
         foreach ($shippingZonePerKgEntries as $zoneSet) {
             if ($maxDefinedWeight > $zoneSet['from']) {
