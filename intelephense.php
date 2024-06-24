@@ -8,4 +8,5 @@
  * @link https://github.com/bmewburn/vscode-intelephense/issues/1706#issuecomment-804843284
  */
 
+define('FILENAME_MODULES', '');
 define('SHIPPING_MAX_WEIGHT', '');
