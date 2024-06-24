@@ -41,6 +41,7 @@ $countries   = \array_map(
     )
 );
 
+/** Sort tariffs by weight, ascending */
 \uasort(
     $tariffs,
     function ($entry_a, $entry_b) {

@@ -15,6 +15,7 @@ trait Installer
         $this->addConfigurationWeight();
         $this->addConfigurationShipping();
         $this->addConfigurationSurcharges();
+        $this->addConfigurationBulkPriceChange();
     }
 
     private function addConfigurationWeight(): void
@@ -45,5 +46,10 @@ trait Installer
     {
         $this->addConfiguration('SURCHARGES', Defaults::getSurcharges(), 6, 1, \grandeljaydhlexpress::class . '::surcharges(');
         $this->addConfiguration('PICK_PACK', Defaults::getPickPack(), 6, 1);
+    }
+
+    private function addConfigurationBulkPriceChange(): void
+    {
+        $this->addConfiguration('BULK_PRICE_CHANGE', '', 6, 1, \grandeljaydhlexpress::class . '::bulkPriceChange(');
     }
 }

@@ -11,5 +11,6 @@ trait Keys
         $this->addKey('WEIGHT');
         $this->addKey('SHIPPING');
         $this->addKey('SURCHARGES');
+        $this->addKey('BULK_PRICE_CHANGE');
     }
 }

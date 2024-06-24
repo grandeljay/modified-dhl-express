@@ -14,6 +14,7 @@ trait Uninstaller
         $this->removeConfigurationWeight();
         $this->removeConfigurationShipping();
         $this->removeConfigurationSurcharges();
+        $this->removeConfigurationBulkPriceChange();
     }
 
     private function removeConfigurationWeight(): void
@@ -42,5 +43,10 @@ trait Uninstaller
     {
         $this->removeConfiguration('SURCHARGES');
         $this->removeConfiguration('PICK_PACK');
+    }
+
+    private function removeConfigurationBulkPriceChange(): void
+    {
+        $this->removeConfiguration('BULK_PRICE_CHANGE');
     }
 }

@@ -20,6 +20,26 @@ class Shipping
                     $zone_title          = sprintf('Zone %s', $zone->value);
                     $configuration_key   = sprintf('MODULE_SHIPPING_GRANDELJAYDHLEXPRESS_SHIPPING_ZONE%s', $zone->value);
                     $configuration_value = constant($configuration_key);
+
+                    /** Apply factor */
+                    $factor              = $_GET['factor'] ?? 1;
+                    $tariffs_json        = \json_decode($configuration_value, true);
+                    $tariffs             = \array_map(
+                        function (array $tariff) use ($factor) {
+                            $tariff['weight-costs'] *= $factor;
+
+                            return $tariff;
+                        },
+                        $tariffs_json['tariffs']
+                    );
+                    $countries           = $tariffs_json['countries'];
+                    $configuration_value = \json_encode(
+                        [
+                            'countries' => $countries,
+                            'tariffs'   => $tariffs,
+                        ]
+                    )
+
                     ?>
                     <details>
                         <summary><?= $zone_title ?></summary>
@@ -29,6 +49,7 @@ class Shipping
                                       spellcheck="false"
                                       data-url="<?= Constants::API_ENDPOINT_WEIGHT_GET ?>"
                                       data-zone="<?= $zone->value ?>"
+                                      data-factor=<?= $_GET['factor'] ?? 1 ?>
                                       ><?= $configuration_value ?></textarea>
                         </div>
                     </details>

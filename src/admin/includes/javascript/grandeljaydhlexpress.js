@@ -22,6 +22,7 @@ function DOMContentLoaded() {
 
                 const url     = textarea.getAttribute('data-url');
                 const zone    = textarea.getAttribute('data-zone');
+                const factor  = textarea.getAttribute('data-factor');
                 const options = {
                     'method'  : 'POST',
                     'headers' : {
@@ -29,8 +30,9 @@ function DOMContentLoaded() {
                         'Accept'       : 'text/html',
                     },
                     'body'    : JSON.stringify({
-                        'zone' : zone,
-                        'json' : textarea.value
+                        'zone'   : zone,
+                        'factor' : factor,
+                        'json'   : textarea.value
                     })
                 };
 
@@ -58,6 +60,25 @@ function DOMContentLoaded() {
     apiElements.forEach(apiElement => {
         observer.observe(apiElement);
     });
+
+    /**
+     * Bulk Price Change
+     */
+    let button_preview = document.getElementById('preview');
+
+    if (button_preview) {
+        button_preview.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            let input_factor = document.querySelector('[name="factor"]');
+            let factor       = input_factor.value;
+            let href         = this.getAttribute('href');
+
+            href = href.replace(/factor=[\d\.]+/, 'factor=' + factor);
+
+            window.location.href = href;
+        });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', DOMContentLoaded);

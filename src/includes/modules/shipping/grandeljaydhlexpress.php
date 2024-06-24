@@ -89,6 +89,7 @@ class grandeljaydhlexpress extends StdModule
         $version_after_update  = self::VERSION;
 
         if (version_compare($version_before_update, '0.9.1', '<=')) {
+            /** Add missing/definable zone countries */
             foreach (Zone::cases() as $zone) {
                 $number = $zone->value;
 
@@ -112,6 +113,9 @@ class grandeljaydhlexpress extends StdModule
                 $this->removeConfiguration($configuration_key);
                 $this->addConfiguration($configuration_key, $configuration_value, 6, 1);
             }
+
+            /** Add Bulk Price Change configuration */
+            $this->addConfigurationBulkPriceChange();
         }
 
         if (version_compare($version_before_update, $version_after_update, '<')) {
