@@ -9,9 +9,17 @@ class Shipping
 {
     public static function getInternational(): string
     {
+        $classes = [];
+
+        if (isset($_GET['factor']) && \is_numeric($_GET['factor'])) {
+            $classes[] = 'factor-active';
+        }
+
+        $class = \implode(' ', $classes);
+
         ob_start();
         ?>
-        <details>
+        <details class="<?= $class ?>">
             <summary>International</summary>
 
             <div>
@@ -41,7 +49,7 @@ class Shipping
                     )
 
                     ?>
-                    <details>
+                    <details class="<?= $class ?>">
                         <summary><?= $zone_title ?></summary>
 
                         <div>
