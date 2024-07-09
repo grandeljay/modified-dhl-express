@@ -33,13 +33,7 @@ if (false === $jsonEncoded) {
 $jsonDecoded = json_decode($jsonEncoded, true, 512, JSON_THROW_ON_ERROR);
 $entries     = json_decode($jsonDecoded['json'], true, 512, JSON_THROW_ON_ERROR);
 $tariffs     = $entries['tariffs'];
-$countries   = \array_map(
-    'trim',
-    \explode(
-        ',',
-        $entries['countries']
-    )
-);
+$countries   = \array_map('trim', $entries['countries']);
 
 /** Sort tariffs by weight, ascending */
 \uasort(
