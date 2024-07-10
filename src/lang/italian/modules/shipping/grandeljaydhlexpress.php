@@ -29,10 +29,15 @@ $translations = [
     'WEIGHT_TITLE'                     => 'Peso',
     'WEIGHT_DESC'                      => 'Determinare il peso ideale e massimo.',
     'WEIGHT_PER_KG'                    => 'Prezzo per kg (da %s Kg, a %s Kg)',
+
     'SHIPPING_TITLE'                   => 'Spedizione',
     'SHIPPING_DESC'                    => 'Peso, prezzi e impostazioni dei vari metodi di spedizione DHL Express.',
+    'SHIPPING_ZONE_PER_KG_TITLE'       => 'Prezzo al kg',
+    'SHIPPING_ZONE_PER_KG_DESC'        => 'Regola l\'impostazione "Prezzo al kg" per le rispettive zone.',
+
     'SURCHARGES_TITLE'                 => 'Impatti',
     'SURCHARGES_DESC'                  => 'Impostazioni relative ai supplementi',
+
     'BULK_PRICE_CHANGE_TITLE'          => 'Variazione del prezzo alla rinfusa',
     'BULK_PRICE_CHANGE_DESC'           => 'Moltiplica tutti i prezzi di spedizione nel modulo per un fattore. Le modifiche sono solo un\'anteprima. I valori non sono definitivi finché non vengono salvati. Prima di ciò, il fattore può essere modificato tutte le volte che si vuole senza che i prezzi cambino effettivamente.',
     'BULK_PRICE_CHANGE_FACTOR_TITLE'   => 'Fattore',

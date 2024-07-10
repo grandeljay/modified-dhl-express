@@ -26,7 +26,7 @@ class grandeljaydhlexpress extends StdModule
     use Module\Installer;
     use Module\Uninstaller;
 
-    public const VERSION = '0.9.1';
+    public const VERSION = '0.10.0';
 
     public static function userMayAccessAPI(): bool
     {
@@ -99,7 +99,7 @@ class grandeljaydhlexpress extends StdModule
                 $configuration_existing = $this->getConfig($configuration_key);
 
                 $countries_json = \json_decode($configuration_default, true);
-                $countries      = implode(',', $countries_json['countries']);
+                $countries      = $countries_json['countries'];
                 $tariffs_json   = \json_decode($configuration_existing, true);
                 $tariffs        = $tariffs_json;
 
@@ -116,6 +116,18 @@ class grandeljaydhlexpress extends StdModule
 
             /** Add Bulk Price Change configuration */
             $this->addConfigurationBulkPriceChange();
+
+            /** Add Price Per Kilogram `set_function` */
+            xtc_db_query(
+                sprintf(
+                    'UPDATE `%s`
+                        SET `set_function`      = "%s"
+                      WHERE `configuration_key` = "%s"',
+                    TABLE_CONFIGURATION,
+                    self::class . '::pricePerKilogram(',
+                    Constants::MODULE_SHIPPING_NAME . '_SHIPPING_ZONE_PER_KG'
+                )
+            );
         }
 
         if (version_compare($version_before_update, $version_after_update, '<')) {

@@ -29,10 +29,15 @@ $translations = [
     'WEIGHT_TITLE'                     => 'Weight',
     'WEIGHT_DESC'                      => 'Determine ideal and maximum weight.',
     'WEIGHT_PER_KG'                    => 'Price per kg (from %s Kg, to %s Kg)',
+
     'SHIPPING_TITLE'                   => 'Shipping',
     'SHIPPING_DESC'                    => 'Weight, prices and settings for the various DHL Express shipping methods.',
+    'SHIPPING_ZONE_PER_KG_TITLE'       => 'Price per kg',
+    'SHIPPING_ZONE_PER_KG_DESC'        => 'Adjusts the "Price per kg" setting for the respective zones.',
+
     'SURCHARGES_TITLE'                 => 'Impacts',
     'SURCHARGES_DESC'                  => 'Settings regarding the surcharges',
+
     'BULK_PRICE_CHANGE_TITLE'          => 'Bulk price change',
     'BULK_PRICE_CHANGE_DESC'           => 'Multiplies all shipping prices in the module by a factor. The changes are only a preview. The values are not finalised until they are saved. Before this, the factor can be changed as often as required without the prices actually changing.',
     'BULK_PRICE_CHANGE_FACTOR_TITLE'   => 'Factor',

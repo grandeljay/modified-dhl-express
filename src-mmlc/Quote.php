@@ -2,6 +2,8 @@
 
 namespace Grandeljay\DhlExpress;
 
+use Grandeljay\DhlExpress\Enum\Zone;
+
 class Quote
 {
     private function setShippingCosts(array &$method, Zone $zone): void
@@ -10,9 +12,11 @@ class Quote
 
         $configuration_key   = sprintf(Constants::MODULE_SHIPPING_NAME . '_SHIPPING_ZONE%s', $zone->value);
         $configuration_value = constant($configuration_key);
-        $costs_list          = json_decode($configuration_value, true);
 
-        usort(
+        $json       = json_decode($configuration_value, true);
+        $costs_list = $json['tariffs'];
+
+        \uasort(
             $costs_list,
             function ($costs_a, $costs_b) {
                 return $costs_a['weight-costs'] <=> $costs_b['weight-costs'];

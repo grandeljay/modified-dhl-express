@@ -56,10 +56,7 @@ enum Zone: int
         );
         $value     = \constant($constant);
         $json      = \json_decode($value, true);
-        $countries = \array_map(
-            'trim',
-            \explode(',', $json['countries'])
-        );
+        $countries = \array_map('trim', $json['countries']);
 
         return $countries;
     }

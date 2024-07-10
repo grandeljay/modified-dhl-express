@@ -5,17 +5,11 @@ namespace Grandeljay\DhlExpress\Field;
 use Grandeljay\DhlExpress\Constants;
 use Grandeljay\DhlExpress\Enum\Zone;
 
-class Shipping
+class Shipping extends Field
 {
     public static function getInternational(): string
     {
-        $classes = [];
-
-        if (isset($_GET['factor']) && \is_numeric($_GET['factor'])) {
-            $classes[] = 'factor-active';
-        }
-
-        $class = \implode(' ', $classes);
+        $class = self::getFieldClasses();
 
         ob_start();
         ?>

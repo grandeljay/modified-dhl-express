@@ -51,7 +51,7 @@ ob_start();
 Betrifft die Länder:<br>
 <input type="text" value="<?= $countries_value ?>" data-name="countries" data-function="zoneChange">
 
-<table data-function="inputWeightChange">
+<table>
     <thead>
         <tr>
             <th>Gewicht</th>
@@ -63,7 +63,7 @@ Betrifft die Länder:<br>
         </tr>
     </thead>
 
-    <tbody>
+    <tbody data-function="inputWeightChange">
         <?php foreach ($tariffs as $tariff) { ?>
             <tr>
                 <td><input type="number" step="any" value="<?= $tariff['weight-max'] ?>" data-name="weight-max"></td>
@@ -77,7 +77,7 @@ Betrifft die Länder:<br>
         <?php } ?>
     </tbody>
 
-    <tfoot>
+    <tfoot data-function="inputPricePerKgChange">
         <?php
         $textWeightPerKg          = \constant(Constants::MODULE_SHIPPING_NAME . '_WEIGHT_PER_KG');
         $shippingZone             = $jsonDecoded['zone'];
@@ -85,17 +85,21 @@ Betrifft die Länder:<br>
         $shippingZonePerKgEntries = \json_decode($shippingZonePerKg, true);
 
         $maxDefinedWeight = end($tariffs)['weight-max'] ?? 0;
+        $factor           = $jsonDecoded['factor'] ?? 1;
 
         foreach ($shippingZonePerKgEntries as $zoneSet) {
-            if ($maxDefinedWeight > $zoneSet['from']) {
+            $priceFrom = $zoneSet['from'];
+            $priceTo   = $zoneSet['to'];
+
+            if ($maxDefinedWeight > $priceFrom) {
                 continue;
             }
 
-            $costsPerKg = $zoneSet['zones'][$shippingZone];
+            $costsPerKg = $zoneSet['zones'][$shippingZone] * $factor;
             ?>
             <tr>
-                <td><?= \sprintf($textWeightPerKg, $zoneSet['from'], $zoneSet['to']) ?></td>
-                <td><input type="number" step="any" data-name="weight-per-kg" value="<?= $costsPerKg ?>" readonly="readonly" style="color: grey; cursor: no-drop;"></td>
+                <td><?= \sprintf($textWeightPerKg, $priceFrom, $priceTo) ?></td>
+                <td><input type="number" step="any" value="<?= $costsPerKg ?>" data-name="weight-per-kg" data-from="<?= $priceFrom ?>" data-to="<?= $priceTo ?>" readonly="readonly" style="color: grey; cursor: no-drop;"></td>
                 <td></td>
             </tr>
             <?php

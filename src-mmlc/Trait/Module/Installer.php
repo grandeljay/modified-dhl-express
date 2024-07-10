@@ -39,7 +39,7 @@ trait Installer
             $this->addConfiguration($configuration_key, $configuration_value, 6, 1);
         }
 
-        $this->addConfiguration('SHIPPING_ZONE_PER_KG', Defaults::getShippingZonePerKg(), 6, 1);
+        $this->addConfiguration('SHIPPING_ZONE_PER_KG', Defaults::getShippingZonePerKg(), 6, 1, \grandeljaydhlexpress::class . '::pricePerKilogram(');
     }
 
     private function addConfigurationSurcharges(): void

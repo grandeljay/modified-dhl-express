@@ -135,6 +135,35 @@ function inputWeightChange() {
     apiElement.value = JSON.stringify(tableData);
 }
 
+function inputPricePerKgChange() {
+    let table     = this.closest('table');
+    let tableRows = table.querySelectorAll('tfoot > tr');
+    let tableData = [];
+
+    let apiElement  = document.querySelector('[name="configuration[MODULE_SHIPPING_GRANDELJAYDHLEXPRESS_SHIPPING_ZONE_PER_KG]"]');
+    let zoneElement = this.closest('[data-zone]');
+
+    tableRows.forEach(tableRow => {
+        let inputWeightPerKg = tableRow.querySelector('[data-name="weight-per-kg"]');
+
+        if (null === inputWeightPerKg) {
+            return;
+        }
+
+        let weightFrom = inputWeightPerKg.getAttribute('data-from');
+        let weightTo   = inputWeightPerKg.getAttribute('data-to');
+        let zone       = zoneElement.getAttribute('data-zone');
+
+        tableData.push({
+            'from' : weightFrom,
+            'to'   : weightTo,
+            'zone' : zone,
+        });
+    });
+
+    apiElement.value = JSON.stringify(tableData);
+}
+
 function inputSurchargeChange() {
     let table     = this.closest('table');
     let tableRows = table.querySelectorAll('tbody > tr');
