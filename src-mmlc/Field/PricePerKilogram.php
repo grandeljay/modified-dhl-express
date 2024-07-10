@@ -30,7 +30,7 @@ class PricePerKilogram extends Field
             },
             $prices_json
         );
-        $configuration_value = \json_encode($prices);
+        $configuration_value = \json_encode($prices, \JSON_PRETTY_PRINT);
 
         $class = self::getFieldClasses();
 
