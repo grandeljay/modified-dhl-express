@@ -105,8 +105,9 @@ document.addEventListener('change', documentChange);
 function zoneChange() {
     let apiElement   = this.closest('details').querySelector('[data-url]');
     let apiValueJson = JSON.parse(apiElement.value);
+    let countries    = this.value.split(',');
 
-    apiValueJson.countries = this.value;
+    apiValueJson.countries = countries;
 
     apiElement.value = JSON.stringify(apiValueJson);
 }
