@@ -26,7 +26,7 @@ class grandeljaydhlexpress extends StdModule
     use Module\Installer;
     use Module\Uninstaller;
 
-    public const VERSION = '0.10.0';
+    public const VERSION = '0.10.1';
 
     public static function userMayAccessAPI(): bool
     {
